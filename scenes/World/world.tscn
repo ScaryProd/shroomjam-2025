@@ -47,9 +47,6 @@ region_rect = Rect2(0, 0, 4000, 4000)
 
 [node name="Player" parent="." instance=ExtResource("2_807wd")]
 
-[node name="Camera2D" parent="Player" index="1"]
-enabled = false
-
 [node name="ColorRect" parent="Player/Camera2D" index="0"]
 material = SubResource("ShaderMaterial_qficy")
 
