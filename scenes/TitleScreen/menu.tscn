@@ -1,0 +1,63 @@
+[gd_scene load_steps=3 format=3 uid="uid://d0ughs2b356ai"]
+
+[ext_resource type="PackedScene" uid="uid://cykduxlpxv01h" path="res://scenes/Utility/basic_button.tscn" id="1_r2t8s"]
+
+[sub_resource type="GDScript" id="GDScript_r2t8s"]
+resource_name = "menu"
+script/source = "extends Control
+
+var level = \"res://scenes/World/world.tscn\"
+
+
+
+func _on_btn_play_click_end() -> void:
+	print(\"going!\")
+	var _level = get_tree().change_scene_to_file(level)
+
+
+
+func _on_btn_exit_click_end() -> void:
+	get_tree().quit()
+"
+
+[node name="Menu" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+script = SubResource("GDScript_r2t8s")
+
+[node name="ColorRect" type="ColorRect" parent="."]
+layout_mode = 0
+offset_right = 658.0
+offset_bottom = 389.0
+color = Color(8.5432083e-07, 0.3306281, 0.026554553, 1)
+
+[node name="Label" type="Label" parent="."]
+layout_mode = 0
+offset_right = 640.0
+offset_bottom = 100.0
+theme_override_font_sizes/font_size = 60
+text = "Surviving my TV!"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="btn_play" parent="." instance=ExtResource("1_r2t8s")]
+layout_mode = 0
+offset_left = 280.0
+offset_top = 250.0
+offset_right = 371.0
+offset_bottom = 286.0
+text = "Play"
+
+[node name="btn_exit" parent="." instance=ExtResource("1_r2t8s")]
+layout_mode = 0
+offset_left = 280.0
+offset_top = 300.0
+offset_right = 371.0
+offset_bottom = 336.0
+text = "Quit
+"
+
+[connection signal="click_end" from="btn_play" to="." method="_on_btn_play_click_end"]
+[connection signal="click_end" from="btn_exit" to="." method="_on_btn_exit_click_end"]

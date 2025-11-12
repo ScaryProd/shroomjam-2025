@@ -1,0 +1,51 @@
+[gd_scene load_steps=6 format=3 uid="uid://cqbnf56yu5um2"]
+
+[ext_resource type="Texture2D" uid="uid://cbe51naiil65c" path="res://assets/sprites/tv/television.png" id="1_iexj6"]
+[ext_resource type="Script" uid="uid://bj1b12o2lbmnh" path="res://scenes/tvobject.gd" id="1_r0hfb"]
+[ext_resource type="PackedScene" uid="uid://xchqv5y2yxly" path="res://scenes/World/world.tscn" id="2_smnua"]
+[ext_resource type="Shader" uid="uid://cv7hfm5duhalc" path="res://addons/crt/crt.gdshader" id="3_2riw5"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_7vxoy"]
+shader = ExtResource("3_2riw5")
+shader_parameter/resolution = Vector2(1280, 720)
+shader_parameter/scan_line_amount = 1.0
+shader_parameter/scan_line_strength = -8.0
+shader_parameter/warp_amount = 0.1
+shader_parameter/noise_amount = 0.03
+shader_parameter/interference_amount = 0.2
+shader_parameter/grille_amount = 0.1
+shader_parameter/grille_size = 1.0
+shader_parameter/vignette_amount = 0.6
+shader_parameter/vignette_intensity = 0.4
+shader_parameter/aberation_amount = 0.5
+shader_parameter/roll_line_amount = 0.3
+shader_parameter/roll_speed = 1.0
+shader_parameter/pixel_strength = -2.0
+
+[node name="tvobject" type="Node2D"]
+script = ExtResource("1_r0hfb")
+
+[node name="tv" type="Node2D" parent="."]
+unique_name_in_owner = true
+
+[node name="World" parent="tv" instance=ExtResource("2_smnua")]
+scale = Vector2(0.1, 0.1)
+
+[node name="tvSprite" type="Sprite2D" parent="tv"]
+position = Vector2(0, 2)
+scale = Vector2(1.5, 1.5)
+texture = ExtResource("1_iexj6")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="ColorRect" type="ColorRect" parent="CanvasLayer"]
+material = SubResource("ShaderMaterial_7vxoy")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -17.0
+offset_top = -16.0
+offset_right = -1134.0
+offset_bottom = -634.0
+grow_horizontal = 2
+grow_vertical = 2
