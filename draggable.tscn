@@ -1,0 +1,57 @@
+[gd_scene load_steps=4 format=3 uid="uid://6kngjy7flue5"]
+
+[ext_resource type="Texture2D" uid="uid://cujy27iq8tl6" path="res://assets/sprites/magnet/magnet.png" id="1_23t8e"]
+
+[sub_resource type="GDScript" id="GDScript_23t8e"]
+resource_name = "draggable"
+script/source = "extends CharacterBody2D
+
+var _dragging : bool = false
+
+func _ready():
+	print(\"woah\")
+
+func _process(delta: float) -> void:
+	if _dragging:
+		var current_position : Vector2 = self.global_position
+		var mouse_position : Vector2 = get_global_mouse_position()
+		
+		var distance : float = current_position.distance_to(mouse_position)
+		var direction : Vector2 = current_position.direction_to(mouse_position)
+		
+		var speed : float = distance / delta
+		
+		velocity = direction * speed
+		move_and_slide()
+
+func _on_button_button_down() -> void:
+	_dragging = true
+
+
+func _on_button_button_up() -> void:
+	_dragging = false
+"
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_law6f"]
+radius = 33.0
+
+[node name="draggable" type="CharacterBody2D"]
+input_pickable = true
+motion_mode = 1
+script = SubResource("GDScript_23t8e")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_law6f")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("1_23t8e")
+
+[node name="Button" type="Button" parent="."]
+offset_left = -33.0
+offset_top = -33.0
+offset_right = 34.0
+offset_bottom = 35.0
+
+[connection signal="input_event" from="." to="." method="_on_input_event"]
+[connection signal="button_down" from="Button" to="." method="_on_button_button_down"]
+[connection signal="button_up" from="Button" to="." method="_on_button_button_up"]

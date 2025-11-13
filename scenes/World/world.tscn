@@ -1,33 +1,15 @@
-[gd_scene load_steps=14 format=3 uid="uid://xchqv5y2yxly"]
+[gd_scene load_steps=12 format=3 uid="uid://xchqv5y2yxly"]
 
 [ext_resource type="Texture2D" uid="uid://dnar7h7uw8c6n" path="res://assets/sprites/background/grass.png" id="1_eyogv"]
 [ext_resource type="PackedScene" uid="uid://btehyr33bg441" path="res://scenes/Player/player.tscn" id="2_807wd"]
 [ext_resource type="PackedScene" uid="uid://csbth43r1v0nw" path="res://scenes/Utility/enemy_spawner.tscn" id="3_bhb7g"]
-[ext_resource type="Shader" uid="uid://cv7hfm5duhalc" path="res://addons/crt/crt.gdshader" id="3_inth5"]
 [ext_resource type="Script" uid="uid://cdjapfa6fpf4s" path="res://scenes/Utility/spawn_info.gd" id="4_7602k"]
 [ext_resource type="AudioStream" uid="uid://m2xk1w3vkbi1" path="res://assets/Sounds/levelupsound.ogg" id="4_qficy"]
 [ext_resource type="AudioStream" uid="uid://dahmhxaagfml5" path="res://assets/Sounds/victory.ogg" id="5_8x3r3"]
-[ext_resource type="PackedScene" uid="uid://biff52xb6efln" path="res://scenes/Enemy/enemy.tscn" id="5_inth5"]
+[ext_resource type="PackedScene" uid="uid://biff52xb6efln" path="res://scenes/Enemy/enemy_demon_weak.tscn" id="5_inth5"]
 [ext_resource type="PackedScene" uid="uid://cykduxlpxv01h" path="res://scenes/Utility/basic_button.tscn" id="5_ng6hi"]
 [ext_resource type="AudioStream" uid="uid://cpmbgrpv63ln6" path="res://assets/Sounds/gameover.ogg" id="6_2g54g"]
 [ext_resource type="PackedScene" uid="uid://bcqm5htu1jq70" path="res://scenes/Objects/experience_gem.tscn" id="8_aqshw"]
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_qficy"]
-shader = ExtResource("3_inth5")
-shader_parameter/resolution = Vector2(640, 320)
-shader_parameter/scan_line_amount = 1.0
-shader_parameter/scan_line_strength = -10.48799992818
-shader_parameter/warp_amount = 0.1
-shader_parameter/noise_amount = 0.1010000047975
-shader_parameter/interference_amount = 0.510000024225
-shader_parameter/grille_amount = 0.1
-shader_parameter/grille_size = 1.0
-shader_parameter/vignette_amount = 0.6
-shader_parameter/vignette_intensity = 0.4
-shader_parameter/aberation_amount = 0.5
-shader_parameter/roll_line_amount = 0.3
-shader_parameter/roll_speed = 1.0
-shader_parameter/pixel_strength = -2.0
 
 [sub_resource type="Resource" id="Resource_qficy"]
 script = ExtResource("4_7602k")
@@ -47,15 +29,12 @@ region_rect = Rect2(0, 0, 4000, 4000)
 
 [node name="Player" parent="." instance=ExtResource("2_807wd")]
 
-[node name="ColorRect" parent="Player/Camera2D" index="0"]
-material = SubResource("ShaderMaterial_qficy")
-
 [node name="EnemyDetectionArea" parent="Player" index="6"]
 visible = true
 
 [node name="LevelUp" type="Panel" parent="Player/GUILayer/GUI" index="1"]
 unique_name_in_owner = true
-process_mode = 2
+process_mode = 3
 visible = false
 layout_mode = 0
 offset_left = 800.0
@@ -86,7 +65,7 @@ stream = ExtResource("4_qficy")
 
 [node name="DeathPanel" type="Panel" parent="Player/GUILayer/GUI" index="2"]
 unique_name_in_owner = true
-process_mode = 2
+visible = false
 layout_mode = 0
 offset_left = 213.0
 offset_top = -337.0
@@ -118,6 +97,9 @@ offset_top = 200.0
 offset_right = 151.0
 offset_bottom = 236.0
 text = "Menu"
+
+[node name="camerabutton" parent="Player/GUILayer" index="2"]
+visible = false
 
 [node name="EnemySpawner" parent="." instance=ExtResource("3_bhb7g")]
 spawns = Array[ExtResource("4_7602k")]([SubResource("Resource_qficy")])

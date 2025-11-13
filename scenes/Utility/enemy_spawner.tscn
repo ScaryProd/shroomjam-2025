@@ -1,7 +1,7 @@
 [gd_scene load_steps=5 format=3 uid="uid://csbth43r1v0nw"]
 
 [ext_resource type="Script" uid="uid://cdjapfa6fpf4s" path="res://scenes/Utility/spawn_info.gd" id="1_36lvi"]
-[ext_resource type="PackedScene" uid="uid://biff52xb6efln" path="res://scenes/Enemy/enemy.tscn" id="2_tulbf"]
+[ext_resource type="PackedScene" uid="uid://biff52xb6efln" path="res://scenes/Enemy/enemy_demon_weak.tscn" id="2_tulbf"]
 
 [sub_resource type="GDScript" id="GDScript_ovkvh"]
 script/source = "extends Node2D

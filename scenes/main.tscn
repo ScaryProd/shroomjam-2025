@@ -1,12 +1,104 @@
-[gd_scene load_steps=2 format=3 uid="uid://xbm55sjeswt6"]
+[gd_scene load_steps=6 format=3 uid="uid://xbm55sjeswt6"]
 
-[ext_resource type="PackedScene" uid="uid://cqbnf56yu5um2" path="res://scenes/tvobject.tscn" id="1_o5qli"]
+[ext_resource type="PackedScene" uid="uid://xchqv5y2yxly" path="res://scenes/World/world.tscn" id="1_0wfyh"]
+[ext_resource type="Texture2D" uid="uid://15pr2s5sh5e6" path="res://assets/sprites/background/testBG.png" id="2_sugp2"]
+[ext_resource type="PackedScene" uid="uid://cykduxlpxv01h" path="res://scenes/Utility/basic_button.tscn" id="3_sugp2"]
+[ext_resource type="PackedScene" uid="uid://6kngjy7flue5" path="res://draggable.tscn" id="4_jyhfs"]
 
-[node name="Node2D" type="Node2D"]
+[sub_resource type="GDScript" id="GDScript_sugp2"]
+resource_name = "mainscript"
+script/source = "extends Node2D
 
-[node name="tvobject" parent="." instance=ExtResource("1_o5qli")]
-position = Vector2(108, 71)
+@onready var camera = $Camera2D
+var zoomout = false
+
+var tweenIn
+var tweenOut
+
+@export var zoomamount = 0.25
+
+func _ready():
+	print(\"wa\")
+	zoomout = false
+
+func _on_btn_camera_click_end() -> void:
+	print(\"script running\")
+	zoomout = !zoomout
+	if zoomout:
+		#$Camera2D.zoom = Vector2(0.4, 0.4)
+		tweenOut = camera.create_tween()
+		tweenOut.tween_property(camera, \"zoom\", Vector2(zoomamount,zoomamount),1)
+		tweenOut.play()
+		
+		
+	else:
+		#$Camera2D.zoom = Vector2(1, 1)
+		tweenIn = camera.create_tween()
+		tweenIn.tween_property(camera, \"zoom\", Vector2(1,1),1)
+		tweenIn.play()
+
+
+func _on_draggable_mouse_entered() -> void:
+	print(\"mouse enter\")
+"
+
+[node name="main_node" type="Node2D"]
+script = SubResource("GDScript_sugp2")
+
+[node name="Button" parent="." instance=ExtResource("3_sugp2")]
+top_level = true
+offset_left = 415.0
+offset_top = 130.0
+offset_right = 506.0
+offset_bottom = 166.0
+
+[node name="draggable" parent="." instance=ExtResource("4_jyhfs")]
+position = Vector2(705, 690.99994)
+scale = Vector2(5, 5)
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+position = Vector2(5, -145)
+scale = Vector2(1.301, 1.33)
+texture = ExtResource("2_sugp2")
 
 [node name="Camera2D" type="Camera2D" parent="."]
+ignore_rotation = false
+position_smoothing_enabled = true
 
-[editable path="tvobject"]
+[node name="SubViewportContainer" type="SubViewportContainer" parent="."]
+offset_left = -317.0
+offset_top = -180.0
+offset_right = 323.0
+offset_bottom = 180.0
+mouse_target = true
+
+[node name="SubViewport" type="SubViewport" parent="SubViewportContainer"]
+handle_input_locally = false
+audio_listener_enable_2d = true
+audio_listener_enable_3d = true
+gui_snap_controls_to_pixels = false
+size = Vector2i(640, 360)
+render_target_update_mode = 4
+
+[node name="World" parent="SubViewportContainer/SubViewport" instance=ExtResource("1_0wfyh")]
+
+[node name="GUILayer_tv" type="CanvasLayer" parent="."]
+
+[node name="Control" type="Control" parent="GUILayer_tv"]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 640.0
+offset_bottom = 360.0
+mouse_filter = 2
+
+[node name="btn_camera" parent="GUILayer_tv/Control" instance=ExtResource("3_sugp2")]
+z_index = 100
+layout_mode = 0
+offset_left = 29.0
+offset_top = 277.0
+offset_right = 177.0
+offset_bottom = 313.0
+text = "camera switch"
+
+[connection signal="mouse_entered" from="draggable" to="." method="_on_draggable_mouse_entered"]
+[connection signal="click_end" from="GUILayer_tv/Control/btn_camera" to="." method="_on_btn_camera_click_end"]

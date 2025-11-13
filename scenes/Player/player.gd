@@ -70,7 +70,11 @@ var enemy_close = []
 @onready var sndVictory = get_node("%snd_victory")
 @onready var sndLose = get_node("%snd_lose")
 
+#Camera
+
+
 func _ready():
+	print("player")
 	attack()
 	set_expbar(experience, calculate_experiencecap())
 	_on_hurt_box_hurt(0,0,0)
@@ -100,7 +104,6 @@ func movement():
 	move_and_slide()
 
 func attack():
-	print(icespear_level)
 	if icespear_level > 0:
 		iceSpearTimer.wait_time = icespear_attackspeed * (1-spell_cooldown)
 		if iceSpearTimer.is_stopped():
@@ -237,10 +240,9 @@ func levelup():
 		option_choice.item = get_random_item()
 		upgradeOptions.add_child(option_choice)
 		options += 1
-	get_tree().paused = true
+	#get_tree().paused = true
 
 func upgrade_character(upgrade):
-	print("upgrading with ", upgrade)
 	match upgrade:
 		"icespear1":
 			icespear_level = 1
@@ -266,7 +268,6 @@ func upgrade_character(upgrade):
 			tornado_level = 4
 			tornado_baseammo += 1
 		"javelin1":
-			print("matched with javelin1")
 			javelin_level = 1
 			javelin_ammo = 1
 		"javelin2":
@@ -296,7 +297,7 @@ func upgrade_character(upgrade):
 	collected_upgrades.append(upgrade)
 	levelPanel.visible = false
 	levelPanel.position = Vector2(800, 50)
-	get_tree().paused = false
+	#get_tree().paused = false
 	calculate_experience(0)
 
 func get_random_item():
@@ -337,7 +338,7 @@ func change_time(argtime = 0):
 func death():
 	deathPanel.visible = true
 	emit_signal("playerdeath")
-	get_tree().paused = true
+	#get_tree().paused = true
 	var tween = deathPanel.create_tween()
 	tween.tween_property(deathPanel,"position",Vector2(220,50),3.0).set_trans(Tween.TRANS_QUINT).set_ease(Tween.EASE_OUT)
 	tween.play()
@@ -347,3 +348,7 @@ func death():
 	else:
 		lblResult.text = "You Lose"
 		sndLose.play()
+
+
+func _on_camerabutton_click_end() -> void:
+	pass # Replace with function body.
