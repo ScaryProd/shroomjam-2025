@@ -76,11 +76,14 @@ texture = ExtResource("1_0ourv")
 
 [node name="lbl_name" type="Label" parent="ColorRect"]
 layout_mode = 0
-offset_left = 42.0
-offset_top = 4.0
-offset_right = 82.0
-offset_bottom = 27.0
+offset_left = 31.0
+offset_top = 2.0
+offset_right = 71.0
+offset_bottom = 25.0
 mouse_filter = 1
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(1, 1, 1, 1)
+theme_override_constants/outline_size = 10
 theme_override_font_sizes/font_size = 13
 text = "Name"
 horizontal_alignment = 1
@@ -92,7 +95,10 @@ offset_top = 27.0
 offset_right = 166.0
 offset_bottom = 48.0
 mouse_filter = 1
-theme_override_font_sizes/font_size = 8
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(1, 1, 1, 1)
+theme_override_constants/outline_size = 10
+theme_override_font_sizes/font_size = 7
 text = "Description of Item"
 autowrap_mode = 3
 
@@ -103,7 +109,10 @@ offset_top = 3.0
 offset_right = 174.0
 offset_bottom = 26.0
 mouse_filter = 1
-theme_override_font_sizes/font_size = 12
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(1, 1, 1, 1)
+theme_override_constants/outline_size = 10
+theme_override_font_sizes/font_size = 10
 text = "Level: 1"
 
 [connection signal="pressed" from="." to="." method="_on_pressed"]

@@ -59,8 +59,8 @@ collision_layer = 5
 collision_mask = 5
 motion_mode = 1
 script = ExtResource("1_wi3bo")
-movement_speed = 40.0
-hp = 2
+hp = 150
+experience = 40
 damage = 2
 
 [node name="Sprite2D" type="Sprite2D" parent="."]

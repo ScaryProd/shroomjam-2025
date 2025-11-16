@@ -1,7 +1,7 @@
 [gd_scene load_steps=16 format=3 uid="uid://btehyr33bg441"]
 
 [ext_resource type="Script" uid="uid://c8rxgwlnv8y3" path="res://scenes/Player/player.gd" id="1_1kbk7"]
-[ext_resource type="Texture2D" uid="uid://13782mklveyr" path="res://assets/sprites/player/playerwalk-Sheet.png" id="1_cyojo"]
+[ext_resource type="Texture2D" uid="uid://dxunsqolec0c4" path="res://assets/newsprites/cooLGuy_sheet.png" id="2_dl1wr"]
 [ext_resource type="PackedScene" uid="uid://bovb4ndw6j007" path="res://scenes/Utility/hurt_box.tscn" id="3_gqjuk"]
 [ext_resource type="Texture2D" uid="uid://s8x2b6vced6s" path="res://assets/GUI/exp_background.png" id="5_hvfru"]
 [ext_resource type="Texture2D" uid="uid://dqyn36ca8vwbj" path="res://assets/GUI/exp_progress.png" id="6_a06cl"]
@@ -62,7 +62,7 @@ motion_mode = 1
 script = ExtResource("1_1kbk7")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
-texture = ExtResource("1_cyojo")
+texture = ExtResource("2_dl1wr")
 hframes = 2
 
 [node name="Camera2D" type="Camera2D" parent="."]
@@ -142,9 +142,9 @@ unique_name_in_owner = true
 self_modulate = Color(1, 1, 1, 0.39215687)
 layout_mode = 0
 offset_left = 304.0
-offset_top = 200.0
+offset_top = 210.0
 offset_right = 336.0
-offset_bottom = 208.0
+offset_bottom = 218.0
 value = 50.0
 texture_over = ExtResource("7_dl1wr")
 texture_progress = ExtResource("8_wwtew")
@@ -184,6 +184,8 @@ offset_top = 131.0
 offset_right = 218.0
 offset_bottom = 167.0
 text = "Camera"
+
+[node name="timer_death" type="Timer" parent="."]
 
 [connection signal="hurt" from="HurtBox" to="." method="_on_hurt_box_hurt"]
 [connection signal="timeout" from="Attack/IceSpearTimer" to="." method="_on_ice_spear_timer_timeout"]

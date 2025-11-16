@@ -1,0 +1,103 @@
+[gd_scene load_steps=12 format=3 uid="uid://bn8jtf76qydoc"]
+
+[ext_resource type="Script" uid="uid://br7ki5dtchs31" path="res://scenes/Enemy/enemy.gd" id="1_rtnqm"]
+[ext_resource type="Texture2D" uid="uid://bfhduc3b8l10c" path="res://assets/newsprites/grandma_evil.png" id="2_lrioy"]
+[ext_resource type="PackedScene" uid="uid://bovb4ndw6j007" path="res://scenes/Utility/hurt_box.tscn" id="3_x0n78"]
+[ext_resource type="PackedScene" uid="uid://buty3iw4dj1c7" path="res://scenes/Utility/hit_box.tscn" id="4_h22ei"]
+[ext_resource type="AudioStream" uid="uid://c82ckse3ihm22" path="res://assets/Sounds/enemy_hit.ogg" id="5_g0any"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_84vye"]
+radius = 6.666667
+height = 28.0
+
+[sub_resource type="Animation" id="Animation_vamnb"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [1]
+}
+
+[sub_resource type="Animation" id="Animation_84vye"]
+resource_name = "walk"
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.3, 0.6),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 1,
+"values": [1, 1, 0]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_o5uld"]
+_data = {
+&"RESET": SubResource("Animation_vamnb"),
+&"walk": SubResource("Animation_84vye")
+}
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_eacat"]
+size = Vector2(32, 48)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ixhtt"]
+size = Vector2(22, 43)
+
+[node name="enemy_grandma" type="CharacterBody2D"]
+scale = Vector2(0.75, 0.75)
+collision_layer = 5
+collision_mask = 5
+motion_mode = 1
+script = ExtResource("1_rtnqm")
+movement_speed = 50.0
+hp = 9999
+experience = 99999999
+damage = 20
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("2_lrioy")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CapsuleShape2D_84vye")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+&"": SubResource("AnimationLibrary_o5uld")
+}
+
+[node name="HurtBox" parent="." instance=ExtResource("3_x0n78")]
+collision_layer = 4
+collision_mask = 4
+HurtBoxType = 1
+
+[node name="CollisionShape2D" parent="HurtBox" index="0"]
+position = Vector2(-4.7683716e-07, 0)
+shape = SubResource("RectangleShape2D_eacat")
+
+[node name="HitBox" parent="." instance=ExtResource("4_h22ei")]
+collision_layer = 2
+collision_mask = 2
+
+[node name="CollisionShape2D" parent="HitBox" index="0"]
+position = Vector2(-1, 1.5)
+shape = SubResource("RectangleShape2D_ixhtt")
+
+[node name="snd_hit" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("5_g0any")
+volume_db = -10.876
+pitch_scale = 0.72
+
+[connection signal="hurt" from="HurtBox" to="." method="_on_hurt_box_hurt"]
+
+[editable path="HurtBox"]
+[editable path="HitBox"]

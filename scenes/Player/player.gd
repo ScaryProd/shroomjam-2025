@@ -10,6 +10,8 @@ var experience = 0
 var experience_level = 1
 var collected_experience = 0
 
+var evilgrandmaTexture = preload("res://assets/newsprites/grandma_evil.png")
+
 #Attacks
 
 var iceSpear = preload("res://scenes/Player/Attack/ice_spear.tscn")
@@ -70,7 +72,7 @@ var enemy_close = []
 @onready var sndVictory = get_node("%snd_victory")
 @onready var sndLose = get_node("%snd_lose")
 
-#Camera
+var mainmenu = "res://scenes/TitleScreen/menu.tscn"
 
 
 func _ready():
@@ -88,9 +90,9 @@ func movement():
 	var mov = Vector2(x_mov, y_mov)
 	
 	if mov.x > 0:
-		sprite.flip_h = false
-	elif mov.x < 0:
 		sprite.flip_h = true
+	elif mov.x < 0:
+		sprite.flip_h = false
 	
 	if mov != Vector2.ZERO:
 		last_movement = mov
@@ -230,7 +232,7 @@ func levelup():
 	sndLevelUp.play()
 	lblLevel.text = str("Level: ", experience_level)
 	var tween = levelPanel.create_tween()
-	tween.tween_property(levelPanel, "position", Vector2(220,50),0.2).set_trans(Tween.TRANS_QUINT).set_ease(Tween.EASE_IN)
+	tween.tween_property(levelPanel, "position", Vector2(380,50),0.2).set_trans(Tween.TRANS_QUINT).set_ease(Tween.EASE_IN)
 	tween.play()
 	levelPanel.visible = true
 	var options = 0
@@ -334,21 +336,36 @@ func change_time(argtime = 0):
 	var get_s = time % 60
 
 	lblTimer.text = "%02d:%02d" % [get_m,get_s]
+var firstTimeDead = true
 
 func death():
-	deathPanel.visible = true
-	emit_signal("playerdeath")
-	#get_tree().paused = true
-	var tween = deathPanel.create_tween()
-	tween.tween_property(deathPanel,"position",Vector2(220,50),3.0).set_trans(Tween.TRANS_QUINT).set_ease(Tween.EASE_OUT)
-	tween.play()
-	if time >= 300:
-		lblResult.text = "You Win"
-		sndVictory.play()
-	else:
-		lblResult.text = "You Lose"
-		sndLose.play()
-
+	if firstTimeDead:
+		$timer_death.start()
+		firstTimeDead = false
+		deathPanel.visible = true
+		emit_signal("playerdeath")
+		#get_tree().paused = true
+		var tween = deathPanel.create_tween()
+		tween.tween_property(deathPanel,"position",Vector2(220,50),3.0).set_trans(Tween.TRANS_QUINT).set_ease(Tween.EASE_OUT)
+		tween.play()
+		if time >= 270:
+			lblResult.text = "You did great!
+	Time for bed!"
+			sndVictory.play()
+		else:
+			$GUILayer/GUI/DeathPanel/grandmaSprite.texture = evilgrandmaTexture
+			lblResult.text = "You Loser! 
+	Try harder!"
+			sndLose.play()
 
 func _on_camerabutton_click_end() -> void:
 	pass # Replace with function body.
+
+func _on_btn_menu_click_end() -> void:
+	gotomainmenu()
+
+func _on_timer_death_timeout() -> void:
+	gotomainmenu()
+
+func gotomainmenu() -> void:
+	var _level = get_tree().change_scene_to_file(mainmenu)

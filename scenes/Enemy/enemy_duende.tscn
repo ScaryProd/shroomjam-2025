@@ -1,7 +1,7 @@
 [gd_scene load_steps=12 format=3 uid="uid://cva5kg2b6p1er"]
 
 [ext_resource type="Script" uid="uid://br7ki5dtchs31" path="res://scenes/Enemy/enemy.gd" id="1_5d7d0"]
-[ext_resource type="Texture2D" uid="uid://n6s21tt2b15r" path="res://assets/sprites/enemies/devilspritesheet.png" id="2_0q0vp"]
+[ext_resource type="Texture2D" uid="uid://b26t1uuogcpxj" path="res://assets/newsprites/duende_sheet.png" id="2_5d7d0"]
 [ext_resource type="PackedScene" uid="uid://bovb4ndw6j007" path="res://scenes/Utility/hurt_box.tscn" id="3_xihkx"]
 [ext_resource type="PackedScene" uid="uid://buty3iw4dj1c7" path="res://scenes/Utility/hit_box.tscn" id="4_pupsp"]
 [ext_resource type="AudioStream" uid="uid://c82ckse3ihm22" path="res://assets/Sounds/enemy_hit.ogg" id="5_7boqu"]
@@ -48,10 +48,10 @@ _data = {
 }
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_eacat"]
-size = Vector2(32, 48)
+size = Vector2(44, 26.666668)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ixhtt"]
-size = Vector2(22, 43)
+size = Vector2(32, 24)
 
 [node name="enemy_demon_strong" type="CharacterBody2D"]
 scale = Vector2(0.75, 0.75)
@@ -59,12 +59,12 @@ collision_layer = 5
 collision_mask = 5
 motion_mode = 1
 script = ExtResource("1_5d7d0")
-movement_speed = 28.0
-hp = 20
-damage = 2
+movement_speed = 200.0
+hp = 30
+experience = 200
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
-texture = ExtResource("2_0q0vp")
+texture = ExtResource("2_5d7d0")
 hframes = 2
 frame = 1
 
@@ -82,7 +82,7 @@ collision_mask = 4
 HurtBoxType = 1
 
 [node name="CollisionShape2D" parent="HurtBox" index="0"]
-position = Vector2(-4.7683716e-07, 0)
+position = Vector2(-0.6666665, 3.1789145e-07)
 shape = SubResource("RectangleShape2D_eacat")
 
 [node name="HitBox" parent="." instance=ExtResource("4_pupsp")]
@@ -90,7 +90,6 @@ collision_layer = 2
 collision_mask = 2
 
 [node name="CollisionShape2D" parent="HitBox" index="0"]
-position = Vector2(-1, 1.5)
 shape = SubResource("RectangleShape2D_ixhtt")
 
 [node name="snd_hit" type="AudioStreamPlayer2D" parent="."]

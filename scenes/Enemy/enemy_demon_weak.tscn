@@ -1,7 +1,7 @@
 [gd_scene load_steps=12 format=3 uid="uid://biff52xb6efln"]
 
 [ext_resource type="Script" uid="uid://br7ki5dtchs31" path="res://scenes/Enemy/enemy.gd" id="1_o7b6l"]
-[ext_resource type="Texture2D" uid="uid://n6s21tt2b15r" path="res://assets/sprites/enemies/devilspritesheet.png" id="2_brdqh"]
+[ext_resource type="Texture2D" uid="uid://d8c1hnf18rpp" path="res://assets/newsprites/demo_sheet.png" id="2_o7b6l"]
 [ext_resource type="PackedScene" uid="uid://bovb4ndw6j007" path="res://scenes/Utility/hurt_box.tscn" id="3_wajdc"]
 [ext_resource type="PackedScene" uid="uid://buty3iw4dj1c7" path="res://scenes/Utility/hit_box.tscn" id="4_loj1l"]
 [ext_resource type="AudioStream" uid="uid://c82ckse3ihm22" path="res://assets/Sounds/enemy_hit.ogg" id="5_ducx3"]
@@ -59,9 +59,10 @@ collision_layer = 5
 collision_mask = 5
 motion_mode = 1
 script = ExtResource("1_o7b6l")
+experience = 2
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
-texture = ExtResource("2_brdqh")
+texture = ExtResource("2_o7b6l")
 hframes = 2
 frame = 1
 

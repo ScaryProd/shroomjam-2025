@@ -1,0 +1,167 @@
+[gd_scene load_steps=9 format=3 uid="uid://ccyfx7e3cmjvb"]
+
+[ext_resource type="Texture2D" uid="uid://bmeifbsmkwmg6" path="res://assets/newsprites/tv/nakedtv.png" id="1_sb1t0"]
+[ext_resource type="PackedScene" uid="uid://cykduxlpxv01h" path="res://scenes/Utility/basic_button.tscn" id="2_tsg16"]
+[ext_resource type="Texture2D" uid="uid://bj0leq28w6muy" path="res://assets/newsprites/tv/powerbutton.png" id="3_m8mxk"]
+[ext_resource type="Texture2D" uid="uid://cqjlk2aifhjyw" path="res://assets/newsprites/tv/plugin.png" id="4_m8mxk"]
+[ext_resource type="Texture2D" uid="uid://dlt0ua6wq0xbe" path="res://assets/newsprites/tv/plugout.png" id="5_8878c"]
+[ext_resource type="Texture2D" uid="uid://dmit2qkoy2rah" path="res://assets/newsprites/tv/antenna_working.png" id="6_wd4vp"]
+[ext_resource type="Texture2D" uid="uid://coido3sup63gl" path="res://assets/newsprites/tv/antenna_broken.png" id="7_uxkc5"]
+
+[sub_resource type="GDScript" id="GDScript_wd4vp"]
+resource_name = "tvscript"
+script/source = "extends Node2D
+
+var pluggedin = true
+
+var antennaleft = true
+var antennaright = true
+
+func _on_btn_plug_click_end() -> void:
+	plugTV()
+
+func _on_btn_rightantenna_click_end() -> void:
+	antennaright = !antennaright
+	$antennanode/spr_antennaright.visible = antennaright
+	$antennanode/spr_antennarightbroken.visible = !antennaright
+
+func _on_btn_leftantenna_click_end() -> void:
+	antennaleft = !antennaleft
+	$antennanode/spr_antennaleft.visible = antennaleft
+	$antennanode/spr_antennaleftbroken.visible = !antennaleft
+
+func plugTV():
+	pluggedin = !pluggedin
+	$plugnode/spr_pluggedin.visible = pluggedin
+	$plugnode/spr_pluggedout.visible = !pluggedin
+"
+
+[node name="tvbackgroundnode" type="Node2D"]
+script = SubResource("GDScript_wd4vp")
+
+[node name="bg_naked" type="Sprite2D" parent="."]
+texture = ExtResource("1_sb1t0")
+
+[node name="plugnode" type="Node2D" parent="."]
+
+[node name="spr_pluggedin" type="Sprite2D" parent="plugnode"]
+position = Vector2(97.145836, 25.078125)
+scale = Vector2(1.031504, 1.1316963)
+texture = ExtResource("4_m8mxk")
+
+[node name="spr_pluggedout" type="Sprite2D" parent="plugnode"]
+visible = false
+position = Vector2(111.75, 39.979782)
+scale = Vector2(1.0069444, 1.0009629)
+texture = ExtResource("5_8878c")
+
+[node name="btn_plug" parent="plugnode" instance=ExtResource("2_tsg16")]
+custom_minimum_size = Vector2(30, 30)
+offset_left = 78.0
+offset_top = 12.0
+offset_right = 148.0
+offset_bottom = 58.0
+focus_mode = 0
+theme_type_variation = &"FlatButton"
+text = ""
+
+[node name="antennanode" type="Node2D" parent="."]
+
+[node name="spr_antennaright" type="Sprite2D" parent="antennanode"]
+position = Vector2(22, -77)
+texture = ExtResource("6_wd4vp")
+
+[node name="spr_antennaleft" type="Sprite2D" parent="antennanode"]
+position = Vector2(-21, -77)
+texture = ExtResource("6_wd4vp")
+flip_h = true
+
+[node name="spr_antennarightbroken" type="Sprite2D" parent="antennanode"]
+visible = false
+position = Vector2(28, -67)
+texture = ExtResource("7_uxkc5")
+
+[node name="spr_antennaleftbroken" type="Sprite2D" parent="antennanode"]
+visible = false
+position = Vector2(-21, -70)
+texture = ExtResource("7_uxkc5")
+flip_h = true
+
+[node name="btn_rightantenna" parent="antennanode" instance=ExtResource("2_tsg16")]
+custom_minimum_size = Vector2(30, 30)
+offset_left = 8.0
+offset_top = -87.0
+offset_right = 53.0
+offset_bottom = -53.0
+focus_mode = 0
+theme_type_variation = &"FlatButton"
+text = ""
+
+[node name="btn_leftantenna" parent="antennanode" instance=ExtResource("2_tsg16")]
+custom_minimum_size = Vector2(30, 30)
+offset_left = -39.0
+offset_top = -89.0
+offset_right = -4.0
+offset_bottom = -59.0
+focus_mode = 0
+theme_type_variation = &"FlatButton"
+text = ""
+
+[node name="Node2D" type="Node2D" parent="."]
+
+[node name="btn_volup" parent="Node2D" instance=ExtResource("2_tsg16")]
+custom_minimum_size = Vector2(5, 5)
+offset_left = 27.0
+offset_top = 43.0
+offset_right = 35.0
+offset_bottom = 51.0
+focus_mode = 0
+theme_type_variation = &"FlatButton"
+text = ""
+
+[node name="btn_voldown" parent="Node2D" instance=ExtResource("2_tsg16")]
+custom_minimum_size = Vector2(5, 5)
+offset_left = 37.0
+offset_top = 43.0
+offset_right = 45.0
+offset_bottom = 51.0
+focus_mode = 0
+theme_type_variation = &"FlatButton"
+text = ""
+
+[node name="TVPowerButton" parent="Node2D" instance=ExtResource("2_tsg16")]
+custom_minimum_size = Vector2(0, 0)
+offset_left = 45.0
+offset_top = 36.0
+offset_right = 68.0
+offset_bottom = 58.0
+focus_mode = 0
+theme_type_variation = &"FlatButton"
+theme_override_colors/font_focus_color = Color(0.9490196, 0.9490196, 0.9490196, 0)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0)
+theme_override_colors/icon_focus_color = Color(1, 1, 1, 1)
+text = ""
+icon = ExtResource("3_m8mxk")
+autowrap_trim_flags = 0
+
+[node name="btn_channelup" parent="Node2D" instance=ExtResource("2_tsg16")]
+custom_minimum_size = Vector2(5, 5)
+offset_left = 12.0
+offset_top = 43.0
+offset_right = 20.0
+offset_bottom = 51.0
+focus_mode = 0
+theme_type_variation = &"FlatButton"
+text = ""
+
+[node name="btn_channeldown" parent="Node2D" instance=ExtResource("2_tsg16")]
+custom_minimum_size = Vector2(5, 5)
+offset_top = 43.0
+offset_bottom = 51.0
+focus_mode = 0
+theme_type_variation = &"FlatButton"
+text = ""
+
+[connection signal="click_end" from="plugnode/btn_plug" to="." method="_on_btn_plug_click_end"]
+[connection signal="click_end" from="antennanode/btn_rightantenna" to="." method="_on_btn_rightantenna_click_end"]
+[connection signal="click_end" from="antennanode/btn_leftantenna" to="." method="_on_btn_leftantenna_click_end"]
