@@ -8,9 +8,9 @@
 [ext_resource type="Shader" uid="uid://cv7hfm5duhalc" path="res://addons/crt/crt.gdshader" id="5_o6xl0"]
 [ext_resource type="Texture2D" uid="uid://cqb4p3k1vdrj5" path="res://assets/GUI/cameraSwitch.png" id="5_tbgi4"]
 [ext_resource type="Texture2D" uid="uid://t4ytnlnanp5x" path="res://assets/newsprites/channel1.png" id="5_tipki"]
-[ext_resource type="Texture2D" uid="uid://d2futm666lk22" path="res://assets/newsprites/tv/bigduck.png" id="9_85g3d"]
 [ext_resource type="AudioStream" uid="uid://c4qrcpgxr2o3q" path="res://assets/Sounds/music/really_long_arms_loopable.ogg" id="10_choun"]
 [ext_resource type="AudioStream" uid="uid://bc63gvbqtfpow" path="res://assets/Sounds/tvchatter.ogg" id="11_eb6dy"]
+[ext_resource type="PackedScene" uid="uid://cjwv4vey40otl" path="res://bigduck.tscn" id="12_eb6dy"]
 [ext_resource type="AudioStream" uid="uid://bwcp8b3vispwu" path="res://assets/Sounds/tvturnoff.ogg" id="12_trceg"]
 
 [sub_resource type="GDScript" id="GDScript_sugp2"]
@@ -22,6 +22,8 @@ script/source = "extends Node2D
 @onready var channelpane  = $ChannelPane
 @onready var audioChatter = $audioChatter
 @onready var audioOff = $audioOff
+@onready var tvOffLabel: Label = $TVOFF
+@onready var ducksprite: Sprite2D = $Ducksprite
 
 var zoomout = true
 
@@ -43,14 +45,17 @@ var turnedOn = true
 
 var duckscale = 0.01
 
+var tvofftext = \"Was the TV turned off..?\"
+var tvunpluggedtext = \"Did someone pull the plug..?\"
+
 func _ready():
 	zoomout = true
 	currentGlitch = 0
 	processZoom()
 
 func _physics_process(delta: float) -> void:
-	duckscale += 0.0001
-	$spr_duck.scale = Vector2(duckscale, duckscale)
+	duckscale += 0.001
+	ducksprite.scale = Vector2(duckscale, duckscale)
 	
 
 func _on_btn_camera_click_end() -> void:
@@ -81,6 +86,7 @@ func tvglitch() -> void:
 			$SubViewportContainer.visible = false
 			$tvStatic.visible = false
 			turnedOn = false
+			plugTV()
 			audioOff.play()
 		4:
 			#The TV changed channel! oh no!
@@ -100,20 +106,21 @@ func tvglitch() -> void:
 			$SubViewportContainer.visible = false
 			channelpane.visible = true
 			currentChannel = 3
-			channelpane.texture = channel1
+			channelpane.texture = channel3
 			audioChatter.play()
 		7:
 			#the TV turned was plugged off! oh no!
 			$SubViewportContainer.visible = false
 			$tvStatic.visible = false
 			turnedOn = false
+			plugTV()
 			audioOff.play()
 		8:
 			#The TV changed channel! oh no!
 			$SubViewportContainer.visible = false
 			channelpane.visible = true
 			currentChannel = 1
-			channelpane.texture = channel2
+			channelpane.texture = channel1
 			audioChatter.play()
 			
 		9:
@@ -127,7 +134,7 @@ func tvglitch() -> void:
 			$SubViewportContainer.visible = false
 			channelpane.visible = true
 			currentChannel = 2
-			channelpane.texture = channel1
+			channelpane.texture = channel2
 			audioChatter.play()
 
 func processZoom() -> void:
@@ -146,6 +153,8 @@ func _on_tv_power_button_click_end() -> void:
 	if plugged:
 		$SubViewportContainer.visible = !$SubViewportContainer.visible
 		$tvStatic.visible = !$tvStatic.visible
+	if !plugged:
+		tvOffLabel = tvofftext
 
 func _on_btn_channelup_click_end() -> void:
 	if currentChannel > 0:
@@ -170,6 +179,8 @@ func plugTV():
 	elif !plugged:
 		$SubViewportContainer.visible = false
 		$tvStatic.visible = false
+		tvOffLabel = tvunpluggedtext
+		
 "
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_tipki"]
@@ -282,14 +293,9 @@ icon = ExtResource("5_tbgi4")
 wait_time = 30.0
 autostart = true
 
-[node name="spr_duck" type="Sprite2D" parent="."]
-position = Vector2(-515, 648)
-scale = Vector2(0.01, 0.01)
-texture = ExtResource("9_85g3d")
-
 [node name="MusicPlayer" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("10_choun")
-volume_db = -30.0
+volume_db = -40.0
 autoplay = true
 parameters/looping = true
 
@@ -302,6 +308,9 @@ pitch_scale = 1.75
 stream = ExtResource("12_trceg")
 volume_db = -20.0
 pitch_scale = 0.93
+
+[node name="Ducksprite" parent="." instance=ExtResource("12_eb6dy")]
+position = Vector2(-1028, -601)
 
 [connection signal="click_end" from="tvbackgroundnode/plugnode/btn_plug" to="." method="_on_btn_plug_click_end"]
 [connection signal="click_end" from="tvbackgroundnode/Node2D/TVPowerButton" to="." method="_on_tv_power_button_click_end"]

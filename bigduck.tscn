@@ -1,0 +1,36 @@
+[gd_scene load_steps=4 format=3 uid="uid://cjwv4vey40otl"]
+
+[ext_resource type="Texture2D" uid="uid://d2futm666lk22" path="res://assets/newsprites/tv/bigduck.png" id="1_lmkhd"]
+[ext_resource type="AudioStream" uid="uid://bv5mlpo8kub70" path="res://assets/Sounds/quack.ogg" id="2_3xl2x"]
+
+[sub_resource type="GDScript" id="GDScript_g8td1"]
+resource_name = "duckscript"
+script/source = "extends Sprite2D
+
+@onready var snd_quack: AudioStreamPlayer = $snd_quack
+
+func _on_button_pressed() -> void:
+	snd_quack.pitch_scale = randf_range(0.65, 3)
+"
+
+[node name="Ducksprite" type="Sprite2D"]
+texture = ExtResource("1_lmkhd")
+script = SubResource("GDScript_g8td1")
+
+[node name="Button" type="Button" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -51.0
+offset_top = -46.0
+offset_right = -51.0
+offset_bottom = -46.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_type_variation = &"FlatButton"
+
+[node name="snd_quack" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("2_3xl2x")
+pitch_scale = 3.13
+
+[connection signal="pressed" from="Button" to="." method="_on_button_pressed"]

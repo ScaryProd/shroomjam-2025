@@ -250,7 +250,7 @@ theme_override_constants/outline_size = 10
 text = "Continue"
 
 [node name="spr_background" type="Sprite2D" parent="."]
-scale = Vector2(1.33, 1.33)
+scale = Vector2(1.34, 1.34)
 texture = ExtResource("1_l6ko7")
 centered = false
 
