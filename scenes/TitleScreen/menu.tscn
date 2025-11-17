@@ -1,17 +1,25 @@
-[gd_scene load_steps=16 format=3 uid="uid://d0ughs2b356ai"]
+[gd_scene load_steps=24 format=3 uid="uid://d0ughs2b356ai"]
 
 [ext_resource type="Texture2D" uid="uid://3o7hcxeoku07" path="res://assets/newsprites/backgroundNEW.png" id="1_l6ko7"]
 [ext_resource type="PackedScene" uid="uid://cykduxlpxv01h" path="res://scenes/Utility/basic_button.tscn" id="1_r2t8s"]
 [ext_resource type="Texture2D" uid="uid://dxunsqolec0c4" path="res://assets/newsprites/cooLGuy_sheet.png" id="1_t7rgk"]
 [ext_resource type="Texture2D" uid="uid://dv5yr1cl3xica" path="res://assets/sprites/marketing/logotransparent.png" id="2_v7er2"]
+[ext_resource type="Texture2D" uid="uid://d8c1hnf18rpp" path="res://assets/newsprites/demo_sheet.png" id="3_g25pw"]
+[ext_resource type="Texture2D" uid="uid://br6u7dulrays3" path="res://assets/newsprites/duckyR.png" id="3_oj1u6"]
 [ext_resource type="Texture2D" uid="uid://8kph7k45e7rb" path="res://assets/sprites/items/gems/blue.png" id="3_wrdv7"]
-[ext_resource type="Texture2D" uid="uid://ipo3sgxg2jo6" path="res://assets/sprites/enemies/devil1.png" id="4_nqg33"]
+[ext_resource type="Texture2D" uid="uid://5di2dh1428yb" path="res://assets/newsprites/alien_sheet.png" id="4_kkn31"]
+[ext_resource type="Texture2D" uid="uid://d23oh6ccygrts" path="res://assets/newsprites/duckyC.png" id="4_yrjb8"]
+[ext_resource type="Texture2D" uid="uid://b26t1uuogcpxj" path="res://assets/newsprites/duende_sheet.png" id="5_3ierj"]
 [ext_resource type="Texture2D" uid="uid://cqb4p3k1vdrj5" path="res://assets/GUI/cameraSwitch.png" id="5_ksq37"]
 [ext_resource type="Texture2D" uid="uid://bj0leq28w6muy" path="res://assets/newsprites/tv/powerbutton.png" id="5_pyjqk"]
 [ext_resource type="Texture2D" uid="uid://cmdpcgkty4jep" path="res://assets/tutorial/television.png" id="7_ksq37"]
 [ext_resource type="Shader" uid="uid://cv7hfm5duhalc" path="res://addons/crt/crt.gdshader" id="8_pyjqk"]
 [ext_resource type="Texture2D" uid="uid://t4ytnlnanp5x" path="res://assets/newsprites/channel1.png" id="11_vh8l7"]
-[ext_resource type="Texture2D" uid="uid://cqjlk2aifhjyw" path="res://assets/newsprites/tv/plugin.png" id="13_vh8l7"]
+[ext_resource type="Texture2D" uid="uid://d2futm666lk22" path="res://assets/newsprites/tv/bigduck.png" id="13_x503c"]
+[ext_resource type="Texture2D" uid="uid://derpp7tehn3xb" path="res://assets/newsprites/javelinUFO.png" id="14_myv4a"]
+[ext_resource type="Texture2D" uid="uid://blfi164vkf85" path="res://assets/newsprites/tornadoNotSheet.png" id="15_jgyly"]
+[ext_resource type="Texture2D" uid="uid://dmfnbe637ixld" path="res://assets/sprites/items/upgrades/chunk.png" id="16_q3c1r"]
+[ext_resource type="PackedScene" uid="uid://ccyfx7e3cmjvb" path="res://scenes/tvbackgroundscene.tscn" id="17_oj1u6"]
 
 [sub_resource type="GDScript" id="GDScript_r2t8s"]
 resource_name = "menu"
@@ -19,30 +27,42 @@ script/source = "extends Control
 
 var level = \"res://scenes/main.tscn\"
 
-
-@onready var logo = $spr_background/spr_logo
 @onready var background = $spr_background
-@onready var playbutton = $spr_background/btn_play
-@onready var tutorialtv = $ColorRect/tut_tv
-@onready var continuebutton = $btn_continue
+@onready var tut_tv: ColorRect = $ColorRect/tut_tv
+@onready var btn_continue: Button = $ColorRect/btn_continue
+@onready var btn_to_game: Button = $ColorRect/tut_tv/btn_to_game
+@onready var logo: Sprite2D = $SubViewportContainer/SubViewport/tvbackgroundnode/spr_logo
+@onready var playbutton: Button = $SubViewportContainer/SubViewport/tvbackgroundnode/btn_play
+@onready var sub_viewport_container: SubViewportContainer = $SubViewportContainer
 
 
 func _ready():
 	var tweenIn
+	playbutton.modulate = Color(255, 255, 255, 0)
+	btn_continue.modulate = Color(255, 255, 255, 0)
+	btn_to_game.modulate = Color(255, 255, 255, 0)
+	
 	tweenIn = logo.create_tween()
-	tweenIn.tween_property(logo, \"position\", Vector2(245.865,70),1.5).set_trans(Tween.TRANS_BOUNCE).set_ease(Tween.EASE_OUT)
-	tweenIn.tween_property(playbutton, \"modulate:a\", 1.0,1).set_ease(Tween.EASE_OUT)
+	tweenIn.tween_property(logo, \"position\", Vector2(0,-76),1.5).set_trans(Tween.TRANS_BOUNCE).set_ease(Tween.EASE_OUT)
+	tweenIn.tween_property(playbutton, \"modulate:a\", 1.0,0.5).set_ease(Tween.EASE_OUT)
 	tweenIn.play()
 
 func _on_btn_play_click_end() -> void:
 	var tweenOut
 	tweenOut = background.create_tween()
-	tweenOut.tween_property(background, \"position\", Vector2(0,-600),2.5).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_OUT)
-	tweenOut.tween_property(tutorialtv, \"position\", Vector2(308,1),4).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_OUT)
-	tweenOut.tween_property(continuebutton, \"modulate:a\", 1.0,1).set_ease(Tween.EASE_OUT)
-	
+	tweenOut.tween_property(sub_viewport_container, \"position\", Vector2(0,-360),1).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_OUT)
+	tweenOut.tween_property(btn_continue, \"modulate:a\", 1.0,0.5).set_ease(Tween.EASE_OUT)
+	tweenOut.play()
 
 func _on_btn_continue_click_end() -> void:
+	var tweenLast
+	tweenLast = create_tween()
+	tweenLast.tween_property(tut_tv, \"position\", Vector2(0,0),1).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_OUT)
+	tweenLast.tween_property(btn_to_game, \"modulate:a\", 1.0,0.5).set_ease(Tween.EASE_OUT)
+	tweenLast.play()
+
+
+func _on_btn_to_game_click_end() -> void:
 	var _level = get_tree().change_scene_to_file(level)
 "
 
@@ -89,8 +109,8 @@ script = SubResource("GDScript_r2t8s")
 
 [node name="ColorRect" type="ColorRect" parent="."]
 layout_mode = 0
-offset_right = 658.0
-offset_bottom = 389.0
+offset_right = 640.0
+offset_bottom = 360.0
 color = Color(8.5432083e-07, 0.3306281, 0.026554553, 1)
 
 [node name="vinny" type="Sprite2D" parent="ColorRect"]
@@ -109,13 +129,13 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="Label2" type="Label" parent="ColorRect/vinny"]
-offset_left = 13.0
-offset_top = 52.0
-offset_right = 45.0
-offset_bottom = 101.0
+offset_left = -19.0
+offset_top = 57.0
+offset_right = 21.0
+offset_bottom = 106.0
 theme_override_constants/outline_size = 10
 text = "W
-ASD"
+A S D"
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -132,22 +152,31 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="exp" type="Sprite2D" parent="ColorRect"]
-position = Vector2(73, 232)
+position = Vector2(356, 117)
 texture = ExtResource("3_wrdv7")
 
 [node name="Label" type="Label" parent="ColorRect/exp"]
-offset_left = 22.0
-offset_top = -12.000002
-offset_right = 169.0
-offset_bottom = 10.999998
+offset_left = 34.0
+offset_top = -15.000002
+offset_right = 226.0
+offset_bottom = 7.999998
 theme_override_constants/outline_size = 10
-text = "Pick these up!"
+text = "Pick these up to level up!"
 horizontal_alignment = 1
 vertical_alignment = 1
 
+[node name="Sprite2D" type="Sprite2D" parent="ColorRect/exp"]
+position = Vector2(16, 10)
+texture = ExtResource("3_oj1u6")
+
+[node name="Sprite2D2" type="Sprite2D" parent="ColorRect/exp"]
+position = Vector2(-16, 9)
+texture = ExtResource("4_yrjb8")
+
 [node name="enemy" type="Sprite2D" parent="ColorRect"]
-position = Vector2(71, 287)
-texture = ExtResource("4_nqg33")
+position = Vector2(378, 207)
+texture = ExtResource("3_g25pw")
+hframes = 2
 
 [node name="Label" type="Label" parent="ColorRect/enemy"]
 offset_left = 27.0
@@ -159,36 +188,88 @@ text = "Destroy these!"
 horizontal_alignment = 1
 vertical_alignment = 1
 
+[node name="Sprite2D" type="Sprite2D" parent="ColorRect/enemy"]
+position = Vector2(29, 8)
+texture = ExtResource("4_kkn31")
+hframes = 2
+
+[node name="Sprite2D2" type="Sprite2D" parent="ColorRect/enemy"]
+position = Vector2(-27, 10)
+texture = ExtResource("5_3ierj")
+flip_h = true
+hframes = 2
+
+[node name="Label3" type="Label" parent="ColorRect"]
+layout_mode = 0
+offset_left = 252.0
+offset_top = 10.0
+offset_right = 377.0
+offset_bottom = 47.0
+theme_override_constants/outline_size = 10
+text = "Inside the TV:"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Sprite2D" type="Sprite2D" parent="ColorRect"]
+position = Vector2(72, 279)
+texture = ExtResource("14_myv4a")
+
+[node name="Sprite2D" type="Sprite2D" parent="ColorRect/Sprite2D"]
+position = Vector2(-40, 10)
+texture = ExtResource("15_jgyly")
+
+[node name="Sprite2D2" type="Sprite2D" parent="ColorRect/Sprite2D"]
+position = Vector2(35, 22)
+texture = ExtResource("16_q3c1r")
+
+[node name="Label3" type="Label" parent="ColorRect/Sprite2D"]
+offset_left = 51.0
+offset_top = -24.0
+offset_right = 198.0
+offset_bottom = 25.0
+theme_override_constants/outline_size = 10
+text = "Collect fun upgrades!"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="btn_continue" parent="ColorRect" instance=ExtResource("1_r2t8s")]
+layout_mode = 0
+offset_left = 407.0
+offset_top = 294.0
+offset_right = 508.0
+offset_bottom = 330.0
+theme_override_constants/outline_size = 10
+text = "Continue"
+
 [node name="tut_tv" type="ColorRect" parent="ColorRect"]
 layout_mode = 0
 offset_left = 649.0
-offset_top = -1.0
-offset_right = 982.0
-offset_bottom = 357.0
+offset_right = 1289.0
+offset_bottom = 360.0
 color = Color(0, 0.34914345, 0.34979558, 1)
 
 [node name="Label" type="Label" parent="ColorRect/tut_tv"]
 layout_mode = 0
-offset_left = 56.0
-offset_top = 18.0
-offset_right = 308.0
-offset_bottom = 41.0
+offset_left = 186.0
+offset_top = 16.0
+offset_right = 438.0
+offset_bottom = 39.0
 theme_override_constants/outline_size = 10
 text = "But OUTSIDE of the screen..."
 horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="Sprite2D" type="Sprite2D" parent="ColorRect/tut_tv"]
-position = Vector2(50, 82)
+position = Vector2(51.25, 107)
 scale = Vector2(0.5, 0.5)
 texture = ExtResource("5_ksq37")
 
 [node name="Label2" type="Label" parent="ColorRect/tut_tv"]
 layout_mode = 0
-offset_left = 64.0
-offset_top = 44.0
-offset_right = 316.0
-offset_bottom = 119.0
+offset_left = 65.25
+offset_top = 69.0
+offset_right = 317.25
+offset_bottom = 144.0
 theme_override_constants/outline_size = 10
 text = "Click this button
 to zoom out
@@ -197,16 +278,16 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="Sprite2D2" type="Sprite2D" parent="ColorRect/tut_tv"]
-position = Vector2(45.000015, 251)
+position = Vector2(324.91516, 87.000015)
 scale = Vector2(4.2553577, 4.2553577)
 texture = ExtResource("5_pyjqk")
 
 [node name="Label3" type="Label" parent="ColorRect/tut_tv"]
 layout_mode = 0
-offset_left = 75.0
-offset_top = 215.0
-offset_right = 327.0
-offset_bottom = 272.0
+offset_left = 360.0
+offset_top = 58.0
+offset_right = 612.0
+offset_bottom = 115.0
 theme_override_constants/outline_size = 10
 text = "Click around the tv for buttons
 or other things to fix it!"
@@ -214,7 +295,7 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="Sprite2D3" type="Sprite2D" parent="ColorRect/tut_tv"]
-position = Vector2(48, 160)
+position = Vector2(53, 234)
 scale = Vector2(0.1194825, 0.119482495)
 texture = ExtResource("7_ksq37")
 
@@ -228,10 +309,10 @@ color = Color(0.24976426, 0, 0.069391355, 1)
 
 [node name="Label4" type="Label" parent="ColorRect/tut_tv"]
 layout_mode = 0
-offset_left = 72.0
-offset_top = 128.0
-offset_right = 324.0
-offset_bottom = 185.0
+offset_left = 66.38507
+offset_top = 201.25
+offset_right = 318.38507
+offset_bottom = 276.25
 theme_override_constants/outline_size = 10
 text = "The TV's kinda old...
 so the image might
@@ -239,59 +320,106 @@ get worse over time"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="btn_continue" parent="." instance=ExtResource("1_r2t8s")]
-modulate = Color(1, 1, 1, 0)
+[node name="btn_to_game" parent="ColorRect/tut_tv" instance=ExtResource("1_r2t8s")]
 layout_mode = 0
-offset_left = 416.0
-offset_top = 303.0
-offset_right = 517.0
-offset_bottom = 339.0
+offset_left = 382.0
+offset_top = 290.0
+offset_right = 546.0
+offset_bottom = 326.0
 theme_override_constants/outline_size = 10
-text = "Continue"
+text = "On to the game!"
 
-[node name="spr_background" type="Sprite2D" parent="."]
-scale = Vector2(1.34, 1.34)
-texture = ExtResource("1_l6ko7")
-centered = false
+[node name="Sprite2D4" type="Sprite2D" parent="ColorRect/tut_tv"]
+position = Vector2(326.93472, 200)
+scale = Vector2(0.5869565, 0.5869565)
+texture = ExtResource("13_x503c")
 
-[node name="Sprite2D" type="Sprite2D" parent="spr_background"]
-position = Vector2(239.70818, 129.64005)
-scale = Vector2(1.0253681, 1.0354795)
-texture = ExtResource("11_vh8l7")
-
-[node name="spr_logo" type="Sprite2D" parent="spr_background"]
-position = Vector2(240.6015, -66.16541)
-scale = Vector2(1.5, 1.5)
-texture = ExtResource("2_v7er2")
-
-[node name="btn_play" parent="spr_background" instance=ExtResource("1_r2t8s")]
-modulate = Color(1, 1, 1, 0)
-offset_left = 194.73683
-offset_top = 187.21803
-offset_right = 285.73682
-offset_bottom = 223.21803
-theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
-text = "Play"
-
-[node name="CanvasModulate" type="CanvasModulate" parent="spr_background"]
-material = SubResource("ShaderMaterial_80gn1")
-
-[node name="Label3" type="Label" parent="spr_background"]
-offset_left = 0.7518797
-offset_top = 233.83456
-offset_right = 133.75188
-offset_bottom = 270.83456
+[node name="Label5" type="Label" parent="ColorRect/tut_tv"]
+layout_mode = 0
+offset_left = 351.93475
+offset_top = 165.0
+offset_right = 603.93475
+offset_bottom = 240.0
 theme_override_constants/outline_size = 10
-theme_override_font_sizes/font_size = 11
-text = "Game by @Alviedev
-and @Twiranux"
+text = "The game WILL continue 
+even when the game is 
+paused, so be quick!"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="spr_pluggedin" type="Sprite2D" parent="spr_background"]
-position = Vector2(337.59396, 160.15038)
-scale = Vector2(1.031504, 1.1316963)
-texture = ExtResource("13_vh8l7")
+[node name="SubViewportContainer" type="SubViewportContainer" parent="."]
+layout_mode = 0
+offset_right = 512.0
+offset_bottom = 512.0
+
+[node name="SubViewport" type="SubViewport" parent="SubViewportContainer"]
+handle_input_locally = false
+size = Vector2i(640, 360)
+render_target_update_mode = 4
+
+[node name="tvbackgroundnode" parent="SubViewportContainer/SubViewport" instance=ExtResource("17_oj1u6")]
+position = Vector2(322, 175.99998)
+scale = Vector2(1.34, 1.34)
+
+[node name="Sprite2D" type="Sprite2D" parent="SubViewportContainer/SubViewport/tvbackgroundnode"]
+position = Vector2(-0.59033203, -1.7032166)
+scale = Vector2(1.0253681, 1.0354795)
+texture = ExtResource("11_vh8l7")
+
+[node name="btn_play" parent="SubViewportContainer/SubViewport/tvbackgroundnode" instance=ExtResource("1_r2t8s")]
+offset_left = -45.522385
+offset_top = 80.59703
+offset_right = 45.477615
+offset_bottom = 116.59703
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+text = "Play"
+
+[node name="CanvasModulate" type="CanvasModulate" parent="SubViewportContainer/SubViewport/tvbackgroundnode"]
+material = SubResource("ShaderMaterial_80gn1")
+position = Vector2(-240.2985, -131.34326)
+
+[node name="Label3" type="Label" parent="SubViewportContainer/SubViewport/tvbackgroundnode"]
+offset_left = -247.76118
+offset_top = 95.52241
+offset_right = -114.761185
+offset_bottom = 149.52242
+theme_override_constants/outline_size = 10
+theme_override_font_sizes/font_size = 11
+text = "Game by @Alviedev
+and @Twiranux
+"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Label4" type="Label" parent="SubViewportContainer/SubViewport/tvbackgroundnode"]
+offset_left = 106.71643
+offset_top = 99.25375
+offset_right = 239.71643
+offset_bottom = 153.25375
+theme_override_constants/outline_size = 10
+theme_override_font_sizes/font_size = 11
+text = "Music credit: @not-jam"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ColorRect2" type="ColorRect" parent="SubViewportContainer/SubViewport/tvbackgroundnode"]
+material = SubResource("ShaderMaterial_vh8l7")
+offset_left = -65.67163
+offset_top = -41.79103
+offset_right = 64.925385
+offset_bottom = 36.567177
+color = Color(0.24976426, 0, 0.069391355, 1)
+
+[node name="spr_logo" type="Sprite2D" parent="SubViewportContainer/SubViewport/tvbackgroundnode"]
+position = Vector2(0.30299377, -197.50867)
+scale = Vector2(1.4999999, 1.4999999)
+texture = ExtResource("2_v7er2")
+
+[node name="spr_background" type="Sprite2D" parent="."]
+visible = false
+scale = Vector2(1.34, 1.34)
+texture = ExtResource("1_l6ko7")
+centered = false
 
 [node name="Label" type="Label" parent="."]
 visible = false
@@ -303,5 +431,6 @@ text = "Surviving my TV!"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[connection signal="click_end" from="btn_continue" to="." method="_on_btn_continue_click_end"]
-[connection signal="click_end" from="spr_background/btn_play" to="." method="_on_btn_play_click_end"]
+[connection signal="click_end" from="ColorRect/btn_continue" to="." method="_on_btn_continue_click_end"]
+[connection signal="click_end" from="ColorRect/tut_tv/btn_to_game" to="." method="_on_btn_to_game_click_end"]
+[connection signal="click_end" from="SubViewportContainer/SubViewport/tvbackgroundnode/btn_play" to="." method="_on_btn_play_click_end"]

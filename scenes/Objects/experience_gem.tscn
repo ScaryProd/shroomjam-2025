@@ -23,13 +23,13 @@ var pitch = 1
 
 func _ready():
 	if experience < 5:
-		pitch = 1.5
+		pitch = randf_range(1.5,2.0)
 		return
 	elif experience < 25:
-		pitch = 1.0
+		pitch = randf_range(0.8,1.0)
 		sprite.texture = spr_blue
 	else:
-		pitch = 0.8
+		pitch = randf_range(0.6,.8)
 		sprite.texture = spr_red
 
 func _physics_process(delta: float) -> void:
@@ -66,7 +66,7 @@ shape = SubResource("RectangleShape2D_enx4o")
 
 [node name="snd_collected" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("2_nrire")
-volume_db = -20.0
+volume_db = -35.0
 max_polyphony = 10
 
 [connection signal="finished" from="snd_collected" to="." method="_on_snd_collected_finished"]

@@ -29,9 +29,11 @@ script = SubResource("GDScript_hyeah")
 
 [node name="snd_hover" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("1_q2b2g")
+volume_db = -10.0
 
 [node name="snd_click" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("2_au6rj")
+volume_db = -10.0
 
 [connection signal="click_end" from="." to="." method="_on_click_end"]
 [connection signal="mouse_entered" from="." to="." method="_on_mouse_entered"]

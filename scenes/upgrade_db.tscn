@@ -11,7 +11,7 @@ const UPGRADES = {
 	\"icespear1\": {
 		\"icon\": WEAPON_PATH + \"icicle.png\",
 		\"displayname\": \"Cursor Attack\",
-		\"details\": \"A spear of ice is thrown at a random enemy\",
+		\"details\": \"A damaging cursor is thrown at a random enemy\",
 		\"level\": \"Level: 1\",
 		\"prerequisite\": [],
 		\"type\": \"weapon\"
@@ -43,7 +43,7 @@ const UPGRADES = {
 	\"javelin1\": {
 		\"icon\": WEAPON_PATH + \"javelin.png\",
 		\"displayname\": \"UFO\",
-		\"details\": \"A magical javelin will follow you attacking enemies in a straight line\",
+		\"details\": \"A flying glorp will follow you attacking enemies in a straight line\",
 		\"level\": \"Level: 1\",
 		\"prerequisite\": [],
 		\"type\": \"weapon\"
@@ -51,7 +51,7 @@ const UPGRADES = {
 	\"javelin2\": {
 		\"icon\": WEAPON_PATH + \"javelin.png\",
 		\"displayname\": \"UFO\",
-		\"details\": \"The javelin will now attack an additional enemy per attack\",
+		\"details\": \"The glorp will now attack an additional enemy per attack\",
 		\"level\": \"Level: 2\",
 		\"prerequisite\": [\"javelin1\"],
 		\"type\": \"weapon\"
@@ -59,7 +59,7 @@ const UPGRADES = {
 	\"javelin3\": {
 		\"icon\": WEAPON_PATH + \"javelin.png\",
 		\"displayname\": \"UFO\",
-		\"details\": \"The javelin will attack another additional enemy per attack\",
+		\"details\": \"The glorp will attack another additional enemy per attack\",
 		\"level\": \"Level: 3\",
 		\"prerequisite\": [\"javelin2\"],
 		\"type\": \"weapon\"
@@ -67,7 +67,7 @@ const UPGRADES = {
 	\"javelin4\": {
 		\"icon\": WEAPON_PATH + \"javelin.png\",
 		\"displayname\": \"UFO\",
-		\"details\": \"The javelin now does + 5 damage per attack and causes 20% additional knockback\",
+		\"details\": \"The glorp now does + 5 damage per attack and causes 20% additional knockback\",
 		\"level\": \"Level: 4\",
 		\"prerequisite\": [\"javelin3\"],
 		\"type\": \"weapon\"
@@ -75,7 +75,7 @@ const UPGRADES = {
 	\"tornado1\": {
 		\"icon\": WEAPON_PATH + \"tornado.png\",
 		\"displayname\": \"Spiral\",
-		\"details\": \"A tornado is created and random heads somewhere in the players direction\",
+		\"details\": \"A Spiral is created and random heads somewhere in the players direction\",
 		\"level\": \"Level: 1\",
 		\"prerequisite\": [],
 		\"type\": \"weapon\"
@@ -99,7 +99,7 @@ const UPGRADES = {
 	\"tornado4\": {
 		\"icon\": WEAPON_PATH + \"tornado.png\",
 		\"displayname\": \"Spiral\",
-		\"details\": \"An additional tornado is created and the knockback is increased by 25%\",
+		\"details\": \"An additional spiral is created and the knockback is increased by 25%\",
 		\"level\": \"Level: 4\",
 		\"prerequisite\": [\"tornado3\"],
 		\"type\": \"weapon\"

@@ -13,6 +13,7 @@ resource_name = "tvscript"
 script/source = "extends Node2D
 
 var pluggedin = true
+@onready var spr_powerlight: Sprite2D = $spr_powerlight
 
 var antennaleft = true
 var antennaright = true
@@ -34,6 +35,21 @@ func plugTV():
 	pluggedin = !pluggedin
 	$plugnode/spr_pluggedin.visible = pluggedin
 	$plugnode/spr_pluggedout.visible = !pluggedin
+
+func unPlugTV():
+	print(\"unplugging in background\")
+	pluggedin = false
+	$plugnode/spr_pluggedin.visible = false
+	$plugnode/spr_pluggedout.visible = true
+
+func setPowerLight(lightColor):
+	match lightColor:
+		\"red\":
+			spr_powerlight.modulate = Color(255, 0, 0)
+		\"green\":
+			spr_powerlight.modulate = Color(0, 255, 0)
+		\"black\":
+			spr_powerlight.modulate = Color(0, 0, 0)
 "
 
 [node name="tvbackgroundnode" type="Node2D"]
@@ -107,9 +123,9 @@ focus_mode = 0
 theme_type_variation = &"FlatButton"
 text = ""
 
-[node name="Node2D" type="Node2D" parent="."]
+[node name="buttonsnode" type="Node2D" parent="."]
 
-[node name="btn_volup" parent="Node2D" instance=ExtResource("2_tsg16")]
+[node name="btn_volup" parent="buttonsnode" instance=ExtResource("2_tsg16")]
 custom_minimum_size = Vector2(5, 5)
 offset_left = 27.0
 offset_top = 43.0
@@ -119,7 +135,7 @@ focus_mode = 0
 theme_type_variation = &"FlatButton"
 text = ""
 
-[node name="btn_voldown" parent="Node2D" instance=ExtResource("2_tsg16")]
+[node name="btn_voldown" parent="buttonsnode" instance=ExtResource("2_tsg16")]
 custom_minimum_size = Vector2(5, 5)
 offset_left = 37.0
 offset_top = 43.0
@@ -129,7 +145,7 @@ focus_mode = 0
 theme_type_variation = &"FlatButton"
 text = ""
 
-[node name="TVPowerButton" parent="Node2D" instance=ExtResource("2_tsg16")]
+[node name="TVPowerButton" parent="buttonsnode" instance=ExtResource("2_tsg16")]
 custom_minimum_size = Vector2(0, 0)
 offset_left = 45.0
 offset_top = 36.0
@@ -144,7 +160,7 @@ text = ""
 icon = ExtResource("3_m8mxk")
 autowrap_trim_flags = 0
 
-[node name="btn_channelup" parent="Node2D" instance=ExtResource("2_tsg16")]
+[node name="btn_channelup" parent="buttonsnode" instance=ExtResource("2_tsg16")]
 custom_minimum_size = Vector2(5, 5)
 offset_left = 12.0
 offset_top = 43.0
@@ -154,13 +170,26 @@ focus_mode = 0
 theme_type_variation = &"FlatButton"
 text = ""
 
-[node name="btn_channeldown" parent="Node2D" instance=ExtResource("2_tsg16")]
+[node name="btn_channeldown" parent="buttonsnode" instance=ExtResource("2_tsg16")]
 custom_minimum_size = Vector2(5, 5)
 offset_top = 43.0
 offset_bottom = 51.0
 focus_mode = 0
 theme_type_variation = &"FlatButton"
 text = ""
+
+[node name="spr_powerlight" type="Sprite2D" parent="."]
+modulate = Color(0, 18.892157, 0, 1)
+position = Vector2(69, 47)
+scale = Vector2(0.4285714, 0.42857143)
+texture = ExtResource("3_m8mxk")
+
+[node name="ColorRect" type="ColorRect" parent="."]
+offset_left = -61.0
+offset_top = -41.0
+offset_right = 61.0
+offset_bottom = 31.0
+color = Color(0, 0, 0, 1)
 
 [connection signal="click_end" from="plugnode/btn_plug" to="." method="_on_btn_plug_click_end"]
 [connection signal="click_end" from="antennanode/btn_rightantenna" to="." method="_on_btn_rightantenna_click_end"]

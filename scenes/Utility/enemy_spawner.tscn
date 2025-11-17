@@ -1,7 +1,7 @@
 [gd_scene load_steps=5 format=3 uid="uid://csbth43r1v0nw"]
 
 [ext_resource type="Script" uid="uid://cdjapfa6fpf4s" path="res://scenes/Utility/spawn_info.gd" id="1_36lvi"]
-[ext_resource type="PackedScene" uid="uid://biff52xb6efln" path="res://scenes/Enemy/enemy_demon_weak.tscn" id="2_tulbf"]
+[ext_resource type="PackedScene" uid="uid://cva5kg2b6p1er" path="res://scenes/Enemy/enemy_duende.tscn" id="2_36lvi"]
 
 [sub_resource type="GDScript" id="GDScript_ovkvh"]
 script/source = "extends Node2D
@@ -65,17 +65,14 @@ func get_random_position():
 	return Vector2(x_spawn, y_spawn)
 "
 
-[sub_resource type="Resource" id="Resource_4fkoc"]
+[sub_resource type="Resource" id="Resource_tulbf"]
 script = ExtResource("1_36lvi")
-time_end = 60
-enemy = ExtResource("2_tulbf")
-enemy_num = 1
-enemy_spawn_delay = 1
+enemy = ExtResource("2_36lvi")
 metadata/_custom_type_script = "uid://cdjapfa6fpf4s"
 
 [node name="EnemySpawner" type="Node2D"]
 script = SubResource("GDScript_ovkvh")
-spawns = Array[ExtResource("1_36lvi")]([SubResource("Resource_4fkoc")])
+spawns = Array[ExtResource("1_36lvi")]([SubResource("Resource_tulbf")])
 
 [node name="Timer" type="Timer" parent="."]
 autostart = true

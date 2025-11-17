@@ -1,0 +1,356 @@
+[gd_scene load_steps=15 format=3 uid="uid://xbm55sjeswt6"]
+
+[ext_resource type="PackedScene" uid="uid://xchqv5y2yxly" path="res://scenes/World/world.tscn" id="1_0wfyh"]
+[ext_resource type="PackedScene" uid="uid://cykduxlpxv01h" path="res://scenes/Utility/basic_button.tscn" id="3_sugp2"]
+[ext_resource type="PackedScene" uid="uid://ccyfx7e3cmjvb" path="res://scenes/tvbackgroundscene.tscn" id="3_tipki"]
+[ext_resource type="PackedScene" uid="uid://6kngjy7flue5" path="res://draggable.tscn" id="4_jyhfs"]
+[ext_resource type="Texture2D" uid="uid://c38v5berwluq4" path="res://assets/newsprites/MagnetNEW.png" id="4_tefeu"]
+[ext_resource type="Shader" uid="uid://cv7hfm5duhalc" path="res://addons/crt/crt.gdshader" id="5_o6xl0"]
+[ext_resource type="Texture2D" uid="uid://cqb4p3k1vdrj5" path="res://assets/GUI/cameraSwitch.png" id="5_tbgi4"]
+[ext_resource type="Texture2D" uid="uid://t4ytnlnanp5x" path="res://assets/newsprites/channel1.png" id="5_tipki"]
+[ext_resource type="AudioStream" uid="uid://c4qrcpgxr2o3q" path="res://assets/Sounds/music/really_long_arms_loopable.ogg" id="10_choun"]
+[ext_resource type="AudioStream" uid="uid://bc63gvbqtfpow" path="res://assets/Sounds/tvchatter.ogg" id="11_eb6dy"]
+[ext_resource type="PackedScene" uid="uid://cjwv4vey40otl" path="res://bigduck.tscn" id="12_eb6dy"]
+[ext_resource type="AudioStream" uid="uid://bwcp8b3vispwu" path="res://assets/Sounds/tvturnoff.ogg" id="12_trceg"]
+
+[sub_resource type="GDScript" id="GDScript_sugp2"]
+resource_name = "mainscript"
+script/source = "extends Node2D
+
+@onready var camera = $Camera2D
+@onready var tvStatic = $tvStatic
+@onready var channelpane  = $ChannelPane
+@onready var audioChatter = $audioChatter
+@onready var audioOff = $audioOff
+@onready var tvOffLabel: Label = $TVOFF
+@onready var ducksprite: Sprite2D = $Ducksprite
+@onready var tvbackgroundnode: Node2D = $tvbackgroundnode
+
+var zoomout = true
+var tweenIn
+var tweenOut
+var currentGlitch = 0
+var currentChannel = 0
+var channel1 = preload(\"res://assets/newsprites/channel1.png\")
+var channel2 = preload(\"res://assets/newsprites/channel2.png\")
+var channel3 = preload(\"res://assets/newsprites/channel3.png\")
+@export var zoomamount: float
+
+var plugged = true
+var turnedOn = true
+@export var duckscale = 0.01
+@export var tvofftext = \"Was the TV turned off..?\"
+@export var tvunpluggedtext = \"Did someone pull the plug..?\"
+
+func _ready():
+	zoomout = true
+	currentGlitch = 0
+	processZoom()
+	ducksprite.visible = false
+
+func _physics_process(delta: float) -> void:
+	pass
+
+func _on_btn_camera_click_end() -> void:
+	zoomout = !zoomout
+	processZoom()
+
+func _on_glitchtimer_timeout() -> void:
+	tvglitch()
+
+func tvglitch() -> void:
+	currentGlitch += 1
+	match currentGlitch:
+		1:
+			tv_turned_off_event()
+		2:
+			tv_change_channel_event(1)
+		3:
+			tv_unplugged_event()
+		4:
+			tv_change_channel_event(2)
+		5:
+			tv_turned_off_event()
+		6:
+			tv_change_channel_event(3)
+		7:
+			tv_unplugged_event()
+		8:
+			tv_change_channel_event(1)
+		9:
+			tv_turned_off_event()
+		10:
+			tv_change_channel_event(2)
+
+func processZoom() -> void:
+	if zoomout:
+		tweenOut = camera.create_tween()
+		tweenOut.tween_property(camera, \"zoom\", Vector2(zoomamount,zoomamount),1)
+		tweenOut.play()
+	else:
+		tweenIn = camera.create_tween()
+		tweenIn.tween_property(camera, \"zoom\", Vector2(1,1),1)
+		tweenIn.play()
+
+func _on_tv_power_button_click_end() -> void:
+	if currentChannel <= 0:
+		turnedOn = !turnedOn
+		if turnedOn:
+			if plugged:
+				$SubViewportContainer.visible = true
+				$tvStatic.visible = true
+			else:
+				tvOffLabel.text = tvofftext
+		else:
+			if plugged:
+				$SubViewportContainer.visible = false
+				$tvStatic.visible = false
+			else:
+				pass
+		setCorrectLight()
+		setCorrectOffLabel()
+
+func _on_btn_channelup_click_end() -> void:
+	fixChannel()
+
+func _on_btn_channeldown_click_end() -> void:
+	fixChannel()
+
+func _on_btn_plug_click_end() -> void:
+	plugTV()
+
+func plugTV():
+	plugged = !plugged
+	if currentChannel <= 0:
+		if plugged and turnedOn:
+			$SubViewportContainer.visible = true
+			$tvStatic.visible = true
+		elif !plugged:
+			unPlugTV()
+		setCorrectLight()
+		setCorrectOffLabel()
+
+func tv_turned_off_event():
+	if currentChannel <= 0:
+		$SubViewportContainer.visible = false
+		$tvStatic.visible = false
+		turnedOn = false
+		audioOff.play()
+		setCorrectLight()
+		setCorrectOffLabel()
+
+func tv_change_channel_event(channelNumber):
+	$SubViewportContainer.visible = false
+	channelpane.visible = true
+	currentChannel = channelNumber
+	var channeltexture
+	match currentChannel:
+		1:
+			channeltexture = channel1
+		2:
+			channeltexture = channel2
+		3: 
+			channeltexture = channel3
+	channelpane.texture = channeltexture
+	audioChatter.play()
+
+func tv_unplugged_event():
+	unPlugTV()
+	if currentChannel <= 0:
+		tvbackgroundnode.unPlugTV()
+		audioOff.play()
+
+func unPlugTV():
+	if currentChannel <= 0:
+		plugged = false
+		$SubViewportContainer.visible = false
+		$tvStatic.visible = false
+		setCorrectLight()
+		setCorrectOffLabel()
+
+func setCorrectLight():
+	if plugged == false:
+		tvbackgroundnode.setPowerLight(\"black\")
+	elif plugged and !turnedOn:
+		tvbackgroundnode.setPowerLight(\"red\")
+	elif plugged and turnedOn:
+		tvbackgroundnode.setPowerLight(\"green\")
+
+func _on_btn_rightantenna_click_end() -> void:
+	fixChannel()
+
+func _on_btn_leftantenna_click_end() -> void:
+	fixChannel()
+
+func fixChannel():
+	if currentChannel > 0:
+		currentChannel = 0
+		$SubViewportContainer.visible = true
+		channelpane.visible = false
+
+func setCorrectOffLabel():
+	if plugged == false:
+		tvOffLabel.text = tvunpluggedtext
+	else:
+		tvOffLabel.text = tvofftext
+
+
+func _on_player_low_hp() -> void:
+	pass
+	#ducksprite.visible = true
+"
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_tipki"]
+shader = ExtResource("5_o6xl0")
+shader_parameter/resolution = Vector2(640, 360)
+shader_parameter/scan_line_amount = 1.0
+shader_parameter/scan_line_strength = -8.0
+shader_parameter/warp_amount = 0.1
+shader_parameter/noise_amount = 0.03
+shader_parameter/interference_amount = 0.2
+shader_parameter/grille_amount = 0.1
+shader_parameter/grille_size = 1.0
+shader_parameter/vignette_amount = 0.6
+shader_parameter/vignette_intensity = 0.4
+shader_parameter/aberation_amount = 0.5
+shader_parameter/roll_line_amount = 0.3
+shader_parameter/roll_speed = 1.0
+shader_parameter/pixel_strength = -2.0
+
+[node name="main_node" type="Node2D"]
+script = SubResource("GDScript_sugp2")
+zoomamount = 0.3
+
+[node name="tvbackgroundnode" parent="." instance=ExtResource("3_tipki")]
+position = Vector2(-2, 28)
+scale = Vector2(5.18, 5.3)
+
+[node name="draggable" parent="." instance=ExtResource("4_jyhfs")]
+visible = false
+position = Vector2(852, 597)
+scale = Vector2(5, 5)
+
+[node name="Sprite2D" parent="draggable" index="1"]
+texture = ExtResource("4_tefeu")
+
+[node name="Camera2D" type="Camera2D" parent="."]
+ignore_rotation = false
+position_smoothing_enabled = true
+
+[node name="TVOFF" type="Label" parent="."]
+offset_left = -93.0
+offset_top = -17.0
+offset_right = 94.0
+offset_bottom = 6.0
+theme_override_constants/outline_size = 10
+text = "Was the TV Turned off..?"
+
+[node name="SubViewportContainer" type="SubViewportContainer" parent="."]
+offset_left = -317.0
+offset_top = -180.0
+offset_right = 323.0
+offset_bottom = 180.0
+mouse_target = true
+
+[node name="SubViewport" type="SubViewport" parent="SubViewportContainer"]
+handle_input_locally = false
+audio_listener_enable_2d = true
+audio_listener_enable_3d = true
+gui_snap_controls_to_pixels = false
+size = Vector2i(640, 360)
+render_target_update_mode = 4
+
+[node name="World" parent="SubViewportContainer/SubViewport" instance=ExtResource("1_0wfyh")]
+
+[node name="ChannelPane" type="Sprite2D" parent="."]
+visible = false
+position = Vector2(1.5, 3.5)
+scale = Vector2(5.155738, 5.0972223)
+texture = ExtResource("5_tipki")
+
+[node name="TVOFF" type="Label" parent="ChannelPane"]
+offset_left = -46.4531
+offset_top = 18.14714
+offset_right = 140.5469
+offset_bottom = 41.14714
+theme_override_constants/outline_size = 10
+theme_override_font_sizes/font_size = 8
+text = "Is this the right channel?"
+
+[node name="tvStatic" type="ColorRect" parent="."]
+material = SubResource("ShaderMaterial_tipki")
+offset_left = -319.0
+offset_top = -180.0
+offset_right = 320.0
+offset_bottom = 182.0
+mouse_filter = 2
+color = Color(0.24976426, 0, 0.069391355, 1)
+
+[node name="GUILayer_tv" type="CanvasLayer" parent="."]
+
+[node name="Control" type="Control" parent="GUILayer_tv"]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 640.0
+offset_bottom = 360.0
+mouse_filter = 2
+
+[node name="btn_camera" parent="GUILayer_tv/Control" instance=ExtResource("3_sugp2")]
+z_index = 100
+layout_mode = 0
+offset_left = 13.0
+offset_top = 277.0
+offset_right = 182.0
+offset_bottom = 396.0
+scale = Vector2(0.5, 0.5)
+text = ""
+icon = ExtResource("5_tbgi4")
+
+[node name="glitchtimer" type="Timer" parent="."]
+wait_time = 30.0
+autostart = true
+
+[node name="MusicPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("10_choun")
+volume_db = -40.0
+autoplay = true
+parameters/looping = true
+
+[node name="audioChatter" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("11_eb6dy")
+volume_db = -10.0
+pitch_scale = 1.75
+
+[node name="audioOff" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("12_trceg")
+volume_db = -20.0
+pitch_scale = 0.93
+
+[node name="Ducksprite" parent="." instance=ExtResource("12_eb6dy")]
+position = Vector2(-542, 249)
+scale = Vector2(2, 2)
+
+[node name="TVOFF" type="Label" parent="Ducksprite"]
+offset_left = -91.0
+offset_top = 42.0
+offset_right = 96.0
+offset_bottom = 65.0
+theme_override_constants/outline_size = 10
+text = "The duck of healing"
+horizontal_alignment = 1
+
+[connection signal="click_end" from="tvbackgroundnode/plugnode/btn_plug" to="." method="_on_btn_plug_click_end"]
+[connection signal="click_end" from="tvbackgroundnode/antennanode/btn_rightantenna" to="." method="_on_btn_rightantenna_click_end"]
+[connection signal="click_end" from="tvbackgroundnode/antennanode/btn_leftantenna" to="." method="_on_btn_leftantenna_click_end"]
+[connection signal="click_end" from="tvbackgroundnode/buttonsnode/TVPowerButton" to="." method="_on_tv_power_button_click_end"]
+[connection signal="click_end" from="tvbackgroundnode/buttonsnode/btn_channelup" to="." method="_on_btn_channelup_click_end"]
+[connection signal="click_end" from="tvbackgroundnode/buttonsnode/btn_channeldown" to="." method="_on_btn_channeldown_click_end"]
+[connection signal="low_hp" from="SubViewportContainer/SubViewport/World/Player" to="." method="_on_player_low_hp"]
+[connection signal="click_end" from="GUILayer_tv/Control/btn_camera" to="." method="_on_btn_camera_click_end"]
+[connection signal="timeout" from="glitchtimer" to="." method="_on_glitchtimer_timeout"]
+
+[editable path="tvbackgroundnode"]
+[editable path="draggable"]
+[editable path="SubViewportContainer/SubViewport/World"]
+[editable path="SubViewportContainer/SubViewport/World/Player"]
+[editable path="SubViewportContainer/SubViewport/World/Player/HurtBox"]

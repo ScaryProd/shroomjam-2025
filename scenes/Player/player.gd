@@ -13,7 +13,6 @@ var collected_experience = 0
 var evilgrandmaTexture = preload("res://assets/newsprites/grandma_evil.png")
 
 #Attacks
-
 var iceSpear = preload("res://scenes/Player/Attack/ice_spear.tscn")
 var tornado = preload("res://scenes/Player/Attack/tornado.tscn")
 var javelin = preload("res://scenes/Player/Attack/javelin.tscn")
@@ -36,9 +35,9 @@ var additional_attacks = 0
 
 #IceSpear
 var icespear_ammo = 0
-var icespear_baseammo = 0
+var icespear_baseammo = 1
 var icespear_attackspeed = 1.5
-var icespear_level = 0
+var icespear_level = 1
 
 #Tornado
 var tornado_ammo = 0
@@ -74,11 +73,16 @@ var enemy_close = []
 
 var mainmenu = "res://scenes/TitleScreen/menu.tscn"
 
+var levelUpsQueued = 0
+
+signal low_hp
 
 func _ready():
-	print("player")
+	speed = 80
+	movement_speed = 80.0
 	attack()
 	set_expbar(experience, calculate_experiencecap())
+	
 	_on_hurt_box_hurt(0,0,0)
 
 func _physics_process(delta):
@@ -121,8 +125,12 @@ func _on_hurt_box_hurt(damage, _angle, _knockback) -> void:
 	hp -= clamp(damage - armor, 1.0, 999.0)
 	healthBar.max_value = maxhp
 	healthBar.value = hp
+	if hp <= (maxhp / 2.0): 
+		emit_signal("low_hp")
 	if hp <= 0:
 		death()
+
+
 
 func _on_ice_spear_timer_timeout() -> void:
 	icespear_ammo += icespear_baseammo + additional_attacks
@@ -230,11 +238,18 @@ func set_expbar(set_value = 1, set_max_value = 100):
 
 func levelup():
 	sndLevelUp.play()
-	lblLevel.text = str("Level: ", experience_level)
-	var tween = levelPanel.create_tween()
-	tween.tween_property(levelPanel, "position", Vector2(380,50),0.2).set_trans(Tween.TRANS_QUINT).set_ease(Tween.EASE_IN)
-	tween.play()
-	levelPanel.visible = true
+	levelUpsQueued += 1
+	var option_children = upgradeOptions.get_children()
+	if option_children.size() <= 0: #make sure theres no levelup already levelup on screen,
+		lblLevel.text = str("Level: ", experience_level)
+		var tween = levelPanel.create_tween()
+		tween.tween_property(levelPanel, "position", Vector2(380,50),0.2).set_trans(Tween.TRANS_QUINT).set_ease(Tween.EASE_IN)
+		tween.play()
+		levelPanel.visible = true
+		#Instead of pausing the game, let's have a level-up queue
+		generate_levelup_options()
+
+func generate_levelup_options():
 	var options = 0
 	var optionsmax = 3
 	while options < optionsmax:
@@ -242,7 +257,6 @@ func levelup():
 		option_choice.item = get_random_item()
 		upgradeOptions.add_child(option_choice)
 		options += 1
-	#get_tree().paused = true
 
 func upgrade_character(upgrade):
 	match upgrade:
@@ -289,18 +303,21 @@ func upgrade_character(upgrade):
 		"ring1","ring2":
 			additional_attacks += 1
 		"food":
-			hp += 20
-			hp = clamp(hp,0,maxhp)
+			healPlayer(20)
 	attack()
 	var option_children = upgradeOptions.get_children()
 	for i in option_children:
 		i.queue_free() 
 	upgrade_options.clear()
 	collected_upgrades.append(upgrade)
-	levelPanel.visible = false
-	levelPanel.position = Vector2(800, 50)
-	#get_tree().paused = false
+	levelUpsQueued -= 1
 	calculate_experience(0)
+	if levelUpsQueued > 0:
+		generate_levelup_options()
+	else:
+		levelPanel.visible = false
+		levelPanel.position = Vector2(800, 50)
+
 
 func get_random_item():
 	var dblist = []
@@ -334,12 +351,13 @@ func change_time(argtime = 0):
 	time = argtime
 	var get_m = int(time/60.0)
 	var get_s = time % 60
-
 	lblTimer.text = "%02d:%02d" % [get_m,get_s]
 var firstTimeDead = true
 
 func death():
 	if firstTimeDead:
+		speed = 0
+		movement_speed = 0
 		$timer_death.start()
 		firstTimeDead = false
 		deathPanel.visible = true
@@ -369,3 +387,9 @@ func _on_timer_death_timeout() -> void:
 
 func gotomainmenu() -> void:
 	var _level = get_tree().change_scene_to_file(mainmenu)
+
+func healPlayer(healAmount):
+	hp += healAmount + 1
+	hp = clamp(hp,0,maxhp)
+	print("healing player by", healAmount, " new health: ", hp)
+	_on_hurt_box_hurt(0,0,0)

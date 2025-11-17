@@ -1,6 +1,7 @@
-[gd_scene load_steps=4 format=3 uid="uid://c2231ytuu7hra"]
+[gd_scene load_steps=5 format=3 uid="uid://c2231ytuu7hra"]
 
 [ext_resource type="Texture2D" uid="uid://dwnejk1u21abs" path="res://assets/sprites/player/attacks/Javelin.png" id="1_duern"]
+[ext_resource type="AudioStream" uid="uid://dju5xt6v8rt6j" path="res://assets/Sounds/glorp.ogg" id="2_838pv"]
 
 [sub_resource type="GDScript" id="GDScript_duern"]
 script/source = "extends Area2D
@@ -73,11 +74,12 @@ func update_javelin():
 			paths = 3
 			attack_size = 1.0 * (1 + player.spell_size)
 			attack_speed = 5.0 * (1-player.spell_cooldown)
+			
 	
 	scale = Vector2(1.0,1.0) * attack_size
 	attackTimer.wait_time = attack_speed
 
-func _physics_process(delta: float) -> void:
+func _physics_process(delta):
 	if target_array.size() > 0:
 		position += angle*speed*delta
 	else:
@@ -118,10 +120,10 @@ func enable_attack(atk = true):
 		collision.call_deferred(\"set\",\"disabled\",true)
 		sprite.texture = spr_jav_reg
 
-func _on_attack_timer_timeout() -> void:
+func _on_attack_timer_timeout():
 	add_paths()
 
-func _on_change_direction_timeout() -> void:
+func _on_change_direction_timeout():
 	if target_array.size() > 0:
 		target_array.remove_at(0)
 		if target_array.size() > 0:
@@ -156,11 +158,14 @@ func _on_reset_pos_timer_timeout():
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_838pv"]
 size = Vector2(11.31371, 50.204586)
 
-[node name="Javelin" type="Area2D"]
+[node name="Javelin" type="Area2D" groups=["attack"]]
 top_level = true
+collision_layer = 4
+collision_mask = 4
 script = SubResource("GDScript_duern")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
+rotation = 0.7853982
 texture = ExtResource("1_duern")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
@@ -172,7 +177,7 @@ disabled = true
 
 [node name="AttackTimer" type="Timer" parent="."]
 unique_name_in_owner = true
-wait_time = 4.0
+wait_time = 5.0
 one_shot = true
 autostart = true
 
@@ -181,9 +186,13 @@ unique_name_in_owner = true
 
 [node name="ResetPosTimer" type="Timer" parent="."]
 unique_name_in_owner = true
+wait_time = 3.0
 autostart = true
 
 [node name="snd_attack" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("2_838pv")
+volume_db = -20.0
+pitch_scale = 3.0
 
 [connection signal="timeout" from="AttackTimer" to="." method="_on_attack_timer_timeout"]
 [connection signal="timeout" from="ChangeDirection" to="." method="_on_change_direction_timeout"]

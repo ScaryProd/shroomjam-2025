@@ -59,10 +59,9 @@ collision_layer = 5
 collision_mask = 5
 motion_mode = 1
 script = ExtResource("1_v7dbe")
-movement_speed = 10.0
 hp = 100
-experience = 50
-damage = 20
+experience = 15
+damage = 5
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 texture = ExtResource("2_uc0b6")
@@ -96,7 +95,7 @@ shape = SubResource("RectangleShape2D_ixhtt")
 
 [node name="snd_hit" type="AudioStreamPlayer2D" parent="."]
 stream = ExtResource("5_hc364")
-volume_db = -20.0
+volume_db = -25.0
 pitch_scale = 0.72
 
 [connection signal="hurt" from="HurtBox" to="." method="_on_hurt_box_hurt"]

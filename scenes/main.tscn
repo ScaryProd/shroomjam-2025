@@ -1,14 +1,20 @@
-[gd_scene load_steps=15 format=3 uid="uid://xbm55sjeswt6"]
+[gd_scene load_steps=29 format=3 uid="uid://xbm55sjeswt6"]
 
 [ext_resource type="PackedScene" uid="uid://xchqv5y2yxly" path="res://scenes/World/world.tscn" id="1_0wfyh"]
 [ext_resource type="PackedScene" uid="uid://cykduxlpxv01h" path="res://scenes/Utility/basic_button.tscn" id="3_sugp2"]
 [ext_resource type="PackedScene" uid="uid://ccyfx7e3cmjvb" path="res://scenes/tvbackgroundscene.tscn" id="3_tipki"]
 [ext_resource type="PackedScene" uid="uid://6kngjy7flue5" path="res://draggable.tscn" id="4_jyhfs"]
 [ext_resource type="Texture2D" uid="uid://c38v5berwluq4" path="res://assets/newsprites/MagnetNEW.png" id="4_tefeu"]
+[ext_resource type="Script" uid="uid://cdjapfa6fpf4s" path="res://scenes/Utility/spawn_info.gd" id="5_dp3eg"]
 [ext_resource type="Shader" uid="uid://cv7hfm5duhalc" path="res://addons/crt/crt.gdshader" id="5_o6xl0"]
 [ext_resource type="Texture2D" uid="uid://cqb4p3k1vdrj5" path="res://assets/GUI/cameraSwitch.png" id="5_tbgi4"]
 [ext_resource type="Texture2D" uid="uid://t4ytnlnanp5x" path="res://assets/newsprites/channel1.png" id="5_tipki"]
+[ext_resource type="PackedScene" uid="uid://biff52xb6efln" path="res://scenes/Enemy/enemy_demon_weak.tscn" id="6_0ld40"]
+[ext_resource type="PackedScene" uid="uid://cvcjdon3yij1b" path="res://scenes/Enemy/enemy_alien.tscn" id="7_gqmmt"]
+[ext_resource type="PackedScene" uid="uid://cva5kg2b6p1er" path="res://scenes/Enemy/enemy_duende.tscn" id="8_yc10j"]
+[ext_resource type="PackedScene" uid="uid://dxtyj5l0kbdrs" path="res://scenes/Enemy/enemy_demon_strong.tscn" id="9_jscy8"]
 [ext_resource type="AudioStream" uid="uid://c4qrcpgxr2o3q" path="res://assets/Sounds/music/really_long_arms_loopable.ogg" id="10_choun"]
+[ext_resource type="PackedScene" uid="uid://bn8jtf76qydoc" path="res://scenes/Enemy/enemy_grandma.tscn" id="10_pm3ni"]
 [ext_resource type="AudioStream" uid="uid://bc63gvbqtfpow" path="res://assets/Sounds/tvchatter.ogg" id="11_eb6dy"]
 [ext_resource type="PackedScene" uid="uid://cjwv4vey40otl" path="res://bigduck.tscn" id="12_eb6dy"]
 [ext_resource type="AudioStream" uid="uid://bwcp8b3vispwu" path="res://assets/Sounds/tvturnoff.ogg" id="12_trceg"]
@@ -24,39 +30,35 @@ script/source = "extends Node2D
 @onready var audioOff = $audioOff
 @onready var tvOffLabel: Label = $TVOFF
 @onready var ducksprite: Sprite2D = $Ducksprite
+@onready var tvbackgroundnode: Node2D = $tvbackgroundnode
+@onready var player: CharacterBody2D = $SubViewportContainer/SubViewport/World/Player
+@onready var tv_off_screen: ColorRect = $tvOffScreen
 
 var zoomout = true
-
 var tweenIn
 var tweenOut
-
 var currentGlitch = 0
-
 var currentChannel = 0
-
 var channel1 = preload(\"res://assets/newsprites/channel1.png\")
 var channel2 = preload(\"res://assets/newsprites/channel2.png\")
 var channel3 = preload(\"res://assets/newsprites/channel3.png\")
-
 @export var zoomamount: float
 
 var plugged = true
 var turnedOn = true
-
-var duckscale = 0.01
-
-var tvofftext = \"Was the TV turned off..?\"
-var tvunpluggedtext = \"Did someone pull the plug..?\"
+@export var duckscale = 0.01
+@export var tvofftext = \"Was the TV turned off..?\"
+@export var tvunpluggedtext = \"Did someone pull the plug..?\"
 
 func _ready():
 	zoomout = true
 	currentGlitch = 0
 	processZoom()
+	player.connect(\"low_hp\", enableDuck)
+	#ducksprite.visible = false
 
 func _physics_process(delta: float) -> void:
-	duckscale += 0.001
-	ducksprite.scale = Vector2(duckscale, duckscale)
-	
+	pass
 
 func _on_btn_camera_click_end() -> void:
 	zoomout = !zoomout
@@ -69,119 +71,246 @@ func tvglitch() -> void:
 	currentGlitch += 1
 	match currentGlitch:
 		1:
-			#the TV turned off! oh no!
-			$SubViewportContainer.visible = false
-			$tvStatic.visible = false
-			turnedOn = false
-			audioOff.play()
+			tv_turned_off_event()
 		2:
-			#The TV changed channel! oh no!
-			$SubViewportContainer.visible = false
-			channelpane.visible = true
-			currentChannel = 1
-			channelpane.texture = channel1
-			audioChatter.play()
+			tv_change_channel_event(1)
 		3:
-			#the TV turned was plugged off! oh no!
-			$SubViewportContainer.visible = false
-			$tvStatic.visible = false
-			turnedOn = false
-			plugTV()
-			audioOff.play()
+			tv_unplugged_event()
 		4:
-			#The TV changed channel! oh no!
-			$SubViewportContainer.visible = false
-			channelpane.visible = true
-			currentChannel = 2
-			channelpane.texture = channel2
-			audioChatter.play()
+			tv_change_channel_event(2)
 		5:
-			#the TV turned off! oh no!
-			$SubViewportContainer.visible = false
-			$tvStatic.visible = false
-			turnedOn = false
-			audioOff.play()
+			tv_turned_off_event()
 		6:
-			#The TV changed channel! oh no!
-			$SubViewportContainer.visible = false
-			channelpane.visible = true
-			currentChannel = 3
-			channelpane.texture = channel3
-			audioChatter.play()
+			tv_change_channel_event(3)
 		7:
-			#the TV turned was plugged off! oh no!
-			$SubViewportContainer.visible = false
-			$tvStatic.visible = false
-			turnedOn = false
-			plugTV()
-			audioOff.play()
+			tv_unplugged_event()
 		8:
-			#The TV changed channel! oh no!
-			$SubViewportContainer.visible = false
-			channelpane.visible = true
-			currentChannel = 1
-			channelpane.texture = channel1
-			audioChatter.play()
-			
+			tv_change_channel_event(1)
 		9:
-			#the TV turned off! oh no!
-			$SubViewportContainer.visible = false
-			$tvStatic.visible = false
-			turnedOn = false
-			audioOff.play()
+			tv_turned_off_event()
 		10:
-			#The TV changed channel! oh no!
-			$SubViewportContainer.visible = false
-			channelpane.visible = true
-			currentChannel = 2
-			channelpane.texture = channel2
-			audioChatter.play()
+			tv_change_channel_event(2)
 
 func processZoom() -> void:
 	if zoomout:
 		tweenOut = camera.create_tween()
-		tweenOut.tween_property(camera, \"zoom\", Vector2(zoomamount,zoomamount),1)
+		tweenOut.tween_property(camera, \"zoom\", Vector2(zoomamount,zoomamount),0.4)
 		tweenOut.play()
 	else:
 		tweenIn = camera.create_tween()
-		tweenIn.tween_property(camera, \"zoom\", Vector2(1,1),1)
+		tweenIn.tween_property(camera, \"zoom\", Vector2(1,1),0.4)
 		tweenIn.play()
 
-
-
 func _on_tv_power_button_click_end() -> void:
-	if plugged:
-		$SubViewportContainer.visible = !$SubViewportContainer.visible
-		$tvStatic.visible = !$tvStatic.visible
-	if !plugged:
-		tvOffLabel = tvofftext
+	if currentChannel <= 0:
+		turnedOn = !turnedOn
+		if turnedOn:
+			if plugged:
+				$SubViewportContainer.visible = true
+				$tvStatic.visible = true
+			else:
+				tvOffLabel.text = tvofftext
+		else:
+			if plugged:
+				tvScreenOff()
+			else:
+				pass
+		setCorrectLight()
+		setCorrectOffLabel()
 
 func _on_btn_channelup_click_end() -> void:
-	if currentChannel > 0:
-		currentChannel = 0
-		$SubViewportContainer.visible = true
-		channelpane.visible = false
+	fixChannel()
 
 func _on_btn_channeldown_click_end() -> void:
-	if currentChannel > 0:
-		currentChannel = 0
-		$SubViewportContainer.visible = true
-		channelpane.visible = false
+	fixChannel()
 
 func _on_btn_plug_click_end() -> void:
 	plugTV()
 
 func plugTV():
 	plugged = !plugged
-	if plugged and turnedOn:
+	if currentChannel <= 0:
+		if plugged and turnedOn:
+			$SubViewportContainer.visible = true
+			$tvStatic.visible = true
+		elif !plugged:
+			unPlugTV()
+		setCorrectLight()
+		setCorrectOffLabel()
+
+func tv_turned_off_event():
+	if currentChannel <= 0:
+		tvScreenOff()
+		turnedOn = false
+		setCorrectLight()
+		setCorrectOffLabel()
+
+func tv_change_channel_event(channelNumber):
+	$SubViewportContainer.visible = false
+	channelpane.visible = true
+	currentChannel = channelNumber
+	var channeltexture
+	match currentChannel:
+		1:
+			channeltexture = channel1
+		2:
+			channeltexture = channel2
+		3: 
+			channeltexture = channel3
+	channelpane.texture = channeltexture
+	audioChatter.play()
+
+func tv_unplugged_event():
+	unPlugTV()
+	if currentChannel <= 0:
+		tvbackgroundnode.unPlugTV()
+		audioOff.play()
+
+func unPlugTV():
+	if currentChannel <= 0:
+		plugged = false
+		tvScreenOff()
+		setCorrectLight()
+		setCorrectOffLabel()
+
+func setCorrectLight():
+	if plugged == false:
+		tvbackgroundnode.setPowerLight(\"black\")
+	elif plugged and !turnedOn:
+		tvbackgroundnode.setPowerLight(\"red\")
+	elif plugged and turnedOn:
+		tvbackgroundnode.setPowerLight(\"green\")
+
+func _on_btn_rightantenna_click_end() -> void:
+	fixChannel()
+
+func _on_btn_leftantenna_click_end() -> void:
+	fixChannel()
+
+func fixChannel():
+	if currentChannel > 0:
+		currentChannel = 0
 		$SubViewportContainer.visible = true
-		$tvStatic.visible = true
-	elif !plugged:
-		$SubViewportContainer.visible = false
-		$tvStatic.visible = false
-		tvOffLabel = tvunpluggedtext
-		
+		channelpane.visible = false
+
+func setCorrectOffLabel():
+	if plugged == false:
+		tvOffLabel.text = tvunpluggedtext
+	else:
+		tvOffLabel.text = tvofftext
+
+func enableDuck():
+	ducksprite.visible = true
+
+func _on_button_pressed() -> void:
+	#the duck button
+	player.healPlayer(1)
+
+	# original size: 630 x 350
+	# target: 630 x 20
+	# original pos: -314 x -177
+	# target: -314 x -10
+
+var tvOffTween
+
+func tvScreenOff():
+	tv_off_screen.size = Vector2(630,350)
+	tv_off_screen.position = Vector2(-314,-177)
+	tv_off_screen.modulate = Color(255, 255, 255, 255)
+	$SubViewportContainer.visible = false
+	$tvStatic.visible = false
+	audioOff.pitch_scale = randf_range(0.8,0.95)
+	audioOff.play()
+	
+	tvOffTween = create_tween()
+	# set parallel so shrinking and lowering happen at the same time
+	tvOffTween.set_parallel(true)
+	tvOffTween.tween_property(tv_off_screen, \"size\", Vector2(630,20),0.2)
+	tvOffTween.tween_property(tv_off_screen, \"position\", Vector2(-314,-10),0.2)
+	# unset parallel so next step happens only on tween completion
+	# call next tween on tween completion
+	
+	# set parallel so shrinking, centering and dimming happen at the same time
+	tvOffTween.chain().tween_property(tv_off_screen, \"size\", Vector2(20,20),0.2)
+	tvOffTween.tween_property(tv_off_screen, \"position\", Vector2(-10,-10),0.2)
+	tvOffTween.tween_property(tv_off_screen, \"modulate\", Color(255, 255, 255, 0), 0.2)
+	tvOffTween.chain().tween_property($tvStatic, \"visible\", false, 0.1)
+	tvOffTween.play()
+	
+	# unset parallel so next step happens on tween completion
+	#tvOffTween.tween_property($tvStatic, \"visible\", false, 0.1)
+	# add tween play call to tween 1
+	# call tween
+	
+	
+
+	
 "
+
+[sub_resource type="Resource" id="Resource_qficy"]
+script = ExtResource("5_dp3eg")
+time_end = 60
+enemy = ExtResource("6_0ld40")
+enemy_num = 1
+enemy_spawn_delay = 1
+metadata/_custom_type_script = "uid://cdjapfa6fpf4s"
+
+[sub_resource type="Resource" id="Resource_dsmqe"]
+script = ExtResource("5_dp3eg")
+time_start = 60
+time_end = 120
+enemy = ExtResource("6_0ld40")
+enemy_num = 4
+metadata/_custom_type_script = "uid://cdjapfa6fpf4s"
+
+[sub_resource type="Resource" id="Resource_a3mki"]
+script = ExtResource("5_dp3eg")
+time_start = 60
+time_end = 270
+enemy = ExtResource("7_gqmmt")
+enemy_num = 1
+enemy_spawn_delay = 5
+metadata/_custom_type_script = "uid://cdjapfa6fpf4s"
+
+[sub_resource type="Resource" id="Resource_2ojv7"]
+script = ExtResource("5_dp3eg")
+time_start = 60
+time_end = 60
+enemy = ExtResource("8_yc10j")
+enemy_num = 1
+metadata/_custom_type_script = "uid://cdjapfa6fpf4s"
+
+[sub_resource type="Resource" id="Resource_ddc11"]
+script = ExtResource("5_dp3eg")
+time_start = 120
+time_end = 270
+enemy = ExtResource("9_jscy8")
+enemy_num = 2
+metadata/_custom_type_script = "uid://cdjapfa6fpf4s"
+
+[sub_resource type="Resource" id="Resource_bpulc"]
+script = ExtResource("5_dp3eg")
+time_start = 120
+time_end = 120
+enemy = ExtResource("8_yc10j")
+enemy_num = 1
+metadata/_custom_type_script = "uid://cdjapfa6fpf4s"
+
+[sub_resource type="Resource" id="Resource_5vaqa"]
+script = ExtResource("5_dp3eg")
+time_start = 270
+time_end = 999
+enemy = ExtResource("10_pm3ni")
+enemy_num = 1
+metadata/_custom_type_script = "uid://cdjapfa6fpf4s"
+
+[sub_resource type="Resource" id="Resource_y6deb"]
+script = ExtResource("5_dp3eg")
+time_start = 300
+time_end = 999
+enemy = ExtResource("10_pm3ni")
+enemy_num = 5
+metadata/_custom_type_script = "uid://cdjapfa6fpf4s"
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_tipki"]
 shader = ExtResource("5_o6xl0")
@@ -220,11 +349,25 @@ texture = ExtResource("4_tefeu")
 ignore_rotation = false
 position_smoothing_enabled = true
 
+[node name="tvOffScreen" type="ColorRect" parent="."]
+anchors_preset = 14
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -314.0
+offset_top = -177.0
+offset_right = 316.0
+offset_bottom = 173.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
 [node name="TVOFF" type="Label" parent="."]
-offset_left = -84.0
-offset_top = -18.0
-offset_right = 103.0
-offset_bottom = 5.0
+offset_left = -93.0
+offset_top = -17.0
+offset_right = 94.0
+offset_bottom = 6.0
 theme_override_constants/outline_size = 10
 text = "Was the TV Turned off..?"
 
@@ -244,6 +387,9 @@ size = Vector2i(640, 360)
 render_target_update_mode = 4
 
 [node name="World" parent="SubViewportContainer/SubViewport" instance=ExtResource("1_0wfyh")]
+
+[node name="EnemySpawner" parent="SubViewportContainer/SubViewport/World" index="2"]
+spawns = Array[ExtResource("5_dp3eg")]([SubResource("Resource_qficy"), SubResource("Resource_dsmqe"), SubResource("Resource_a3mki"), SubResource("Resource_2ojv7"), SubResource("Resource_ddc11"), SubResource("Resource_bpulc"), SubResource("Resource_5vaqa"), SubResource("Resource_y6deb")])
 
 [node name="ChannelPane" type="Sprite2D" parent="."]
 visible = false
@@ -306,18 +452,37 @@ pitch_scale = 1.75
 
 [node name="audioOff" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("12_trceg")
-volume_db = -20.0
+volume_db = -25.0
 pitch_scale = 0.93
 
 [node name="Ducksprite" parent="." instance=ExtResource("12_eb6dy")]
-position = Vector2(-1028, -601)
+visible = false
+position = Vector2(-542, 249)
+scale = Vector2(2, 2)
+
+[node name="lbl_duck" type="Label" parent="Ducksprite"]
+offset_left = -91.0
+offset_top = 42.0
+offset_right = 96.0
+offset_bottom = 65.0
+theme_override_constants/outline_size = 10
+text = "The duck of healing"
+horizontal_alignment = 1
+metadata/_edit_use_anchors_ = true
 
 [connection signal="click_end" from="tvbackgroundnode/plugnode/btn_plug" to="." method="_on_btn_plug_click_end"]
-[connection signal="click_end" from="tvbackgroundnode/Node2D/TVPowerButton" to="." method="_on_tv_power_button_click_end"]
-[connection signal="click_end" from="tvbackgroundnode/Node2D/btn_channelup" to="." method="_on_btn_channelup_click_end"]
-[connection signal="click_end" from="tvbackgroundnode/Node2D/btn_channeldown" to="." method="_on_btn_channeldown_click_end"]
+[connection signal="click_end" from="tvbackgroundnode/antennanode/btn_rightantenna" to="." method="_on_btn_rightantenna_click_end"]
+[connection signal="click_end" from="tvbackgroundnode/antennanode/btn_leftantenna" to="." method="_on_btn_leftantenna_click_end"]
+[connection signal="click_end" from="tvbackgroundnode/buttonsnode/TVPowerButton" to="." method="_on_tv_power_button_click_end"]
+[connection signal="click_end" from="tvbackgroundnode/buttonsnode/btn_channelup" to="." method="_on_btn_channelup_click_end"]
+[connection signal="click_end" from="tvbackgroundnode/buttonsnode/btn_channeldown" to="." method="_on_btn_channeldown_click_end"]
 [connection signal="click_end" from="GUILayer_tv/Control/btn_camera" to="." method="_on_btn_camera_click_end"]
 [connection signal="timeout" from="glitchtimer" to="." method="_on_glitchtimer_timeout"]
+[connection signal="pressed" from="Ducksprite/Button" to="." method="_on_button_pressed"]
 
 [editable path="tvbackgroundnode"]
 [editable path="draggable"]
+[editable path="SubViewportContainer/SubViewport/World"]
+[editable path="SubViewportContainer/SubViewport/World/Player"]
+[editable path="SubViewportContainer/SubViewport/World/Player/HurtBox"]
+[editable path="Ducksprite"]
